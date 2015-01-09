@@ -17,7 +17,11 @@ This project aims to provide matlab fuzzy toolbox functionalities in python
 * Free software: BSD license
 * Documentation: https://pyfuzzy_toolbox.readthedocs.org.
 
+Obs.: None of this above are valid. It is part of the package's boilerplate. Awhile the project evolves those links will be updated
+
 Features
 --------
 
-* TODO
+* Add default corporas
+* Model class to access corpora in MongoDB
+* That's it, for now. There is a lot of work ahead. Stay tuned. 
