@@ -12,7 +12,7 @@ Python Fuzzy Toolbox
         :target: https://pypi.python.org/pypi/pyfuzzy_toolbox
 
 
-This project aims to provide matlab fuzzy toolbox f functionalities in python
+This project aims to provide matlab fuzzy toolbox functionalities in python
 
 * Free software: BSD license
 * Documentation: https://pyfuzzy_toolbox.readthedocs.org.
