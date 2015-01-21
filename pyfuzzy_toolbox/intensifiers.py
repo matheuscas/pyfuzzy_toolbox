@@ -166,7 +166,7 @@ def expand_words():
 
         # log.write(
         #     '----------------------------------------------------------------------------- \n')
-    with open('intensifiers.json', 'w') as adv_file:
+    with open('resources/adverbs/intensifiers.json', 'w') as adv_file:
         json.dump(intensifiers.to_dict(), adv_file,
                   sort_keys=True, indent=4, separators=(',', ': '))
 
