@@ -3,6 +3,7 @@ from textblob.wordnet import ADV
 from addict import Dict
 import networkx as nx
 import json
+import os
 
 # Intensifiers and Downtoners - From Taboada et al. (2011)
 
@@ -20,37 +21,39 @@ import json
 intensifiers = Dict()
 intensifiers.low.seed = 'pretty'
 intensifiers.low.words = []
-intensifiers.low.modifier = -10
+intensifiers.low.modifier = -0.1
 
 intensifiers.very_low.seed = 'somewhat'
 intensifiers.very_low.words = []
-intensifiers.very_low.modifier = -30
+intensifiers.very_low.modifier = -0.3
 
 intensifiers.lowest.seed = 'slightly'
 intensifiers.lowest.words = []
-intensifiers.lowest.modifier = -50
+intensifiers.lowest.modifier = -0.5
 
 intensifiers.high.seed = 'really'
 intensifiers.high.words = []
-intensifiers.high.modifier = 15
+intensifiers.high.modifier = 0.15
 
 intensifiers.very_high.seed = 'very'
 intensifiers.very_high.words = []
-intensifiers.very_high.modifier = 25
+intensifiers.very_high.modifier = 0.25
 
 intensifiers.highest.seed = 'extraordinarily'
 intensifiers.highest.words = []
-intensifiers.highest.modifier = 50
+intensifiers.highest.modifier = 0.5
 
 intensifiers.most_highest.seed = 'most'
 intensifiers.most_highest.words = []
-intensifiers.most_highest.modifier = 100
+intensifiers.most_highest.modifier = 1
 
 intensifiers.unknown = []
 
+current_path = os.path.dirname(os.path.realpath(__file__))
+
 
 def expand_words():
-    list_of_adverbs = open('resources/adverbs/list_of_adverbs_and_wordnet.txt')
+    list_of_adverbs = open(current_path + '/resources/adverbs/list_of_adverbs_and_wordnet.txt')
     G = read_adverbs_graph()
     greater_similarity_key = None
     greater_similarity_value = -1
@@ -68,7 +71,7 @@ def expand_words():
                 G, adv, [intensifiers.low.seed] + intensifiers.low.words)
 
             # log.write('adv: ' + adv + ' - seed + words: ' +
-            #           str([intensifiers.low.seed] + intensifiers.low.words) + ' ### greater_similarity_key: ' + greater_similarity_key +
+            # str([intensifiers.low.seed] + intensifiers.low.words) + ' ### greater_similarity_key: ' + greater_similarity_key +
             #           ' - greater_similarity_value: ' + str(greater_similarity_value) + '\n')
 
             very_low_distance = multiple_adverbs_similarity(
@@ -83,7 +86,7 @@ def expand_words():
                 greater_similarity_key = 'very_low'
 
                 # log.write('adv: ' + adv + ' - seed + words: ' +
-                #           str([intensifiers.very_low.seed] + intensifiers.very_low.words) + ' ###  greater_similarity_key: ' + greater_similarity_key +
+                # str([intensifiers.very_low.seed] + intensifiers.very_low.words) + ' ###  greater_similarity_key: ' + greater_similarity_key +
                 #           ' - greater_similarity_value: ' + str(greater_similarity_value) + '\n')
 
             lowest_distance = multiple_adverbs_similarity(
@@ -97,7 +100,7 @@ def expand_words():
                 greater_similarity_key = 'lowest'
 
                 # log.write('adv: ' + adv + ' - seed + words: ' +
-                #           str([intensifiers.lowest.seed] + intensifiers.lowest.words) + ' ### greater_similarity_key: ' + greater_similarity_key +
+                # str([intensifiers.lowest.seed] + intensifiers.lowest.words) + ' ### greater_similarity_key: ' + greater_similarity_key +
                 #           ' - greater_similarity_value: ' + str(greater_similarity_value) + '\n')
 
             high_distance = multiple_adverbs_similarity(
@@ -111,7 +114,7 @@ def expand_words():
                 greater_similarity_key = 'high'
 
                 # log.write('adv: ' + adv + ' - seed + words: ' +
-                #           str([intensifiers.high.seed] + intensifiers.high.words) + ' ### greater_similarity_key: ' + greater_similarity_key +
+                # str([intensifiers.high.seed] + intensifiers.high.words) + ' ### greater_similarity_key: ' + greater_similarity_key +
                 #           ' - greater_similarity_value: ' + str(greater_similarity_value) + '\n')
 
             very_high_distance = multiple_adverbs_similarity(
@@ -125,7 +128,7 @@ def expand_words():
                 greater_similarity_key = 'very_high'
 
                 # log.write('adv: ' + adv + ' - seed + words: ' +
-                #           str([intensifiers.very_high.seed] + intensifiers.very_high.words) + ' ### greater_similarity_key: ' + greater_similarity_key +
+                # str([intensifiers.very_high.seed] + intensifiers.very_high.words) + ' ### greater_similarity_key: ' + greater_similarity_key +
                 #           ' - greater_similarity_value: ' + str(greater_similarity_value) + '\n')
 
             highest_distance = multiple_adverbs_similarity(
@@ -139,7 +142,7 @@ def expand_words():
                 greater_similarity_key = 'highest'
 
                 # log.write('adv: ' + adv + ' - seed + words: ' +
-                #           str([intensifiers.highest.seed] + intensifiers.highest.words) + ' ### greater_similarity_key: ' + greater_similarity_key +
+                # str([intensifiers.highest.seed] + intensifiers.highest.words) + ' ### greater_similarity_key: ' + greater_similarity_key +
                 #           ' - greater_similarity_value: ' + str(greater_similarity_value) + '\n')
 
             most_highest_distance = multiple_adverbs_similarity(
@@ -153,7 +156,7 @@ def expand_words():
                 greater_similarity_key = 'most_highest'
 
                 # log.write('adv: ' + adv + ' - seed + words: ' + str(
-                #     [intensifiers.most_highest.seed] + intensifiers.most_highest.words) + ' ### greater_similarity_key: ' + greater_similarity_key +
+                # [intensifiers.most_highest.seed] + intensifiers.most_highest.words) + ' ### greater_similarity_key: ' + greater_similarity_key +
                 #     ' - greater_similarity_value: ' + str(greater_similarity_value) + '\n')
 
             if greater_similarity_key is not None and greater_similarity_value != -1:
@@ -166,14 +169,14 @@ def expand_words():
 
         # log.write(
         #     '----------------------------------------------------------------------------- \n')
-    with open('resources/adverbs/intensifiers.json', 'w') as adv_file:
+    with open(current_path + '/resources/adverbs/intensifiers.json', 'w') as adv_file:
         json.dump(intensifiers.to_dict(), adv_file,
                   sort_keys=True, indent=4, separators=(',', ': '))
 
 
 def create_adverbs_graph(format='graphml'):
     G = nx.Graph()
-    list_of_adverbs = open('resources/adverbs/list_of_adverbs_and_wordnet.txt')
+    list_of_adverbs = open(current_path + '/resources/adverbs/list_of_adverbs_and_wordnet.txt')
     for adverb in list_of_adverbs.readlines():
         adv = adverb.strip()
         adv_synsets = Word(adv).get_synsets(pos=ADV)
@@ -184,11 +187,15 @@ def create_adverbs_graph(format='graphml'):
             if word != adv:
                 G.add_edge(adv, word, weight=int(sense))
 
-    nx.write_graphml(G, "resources/adverbs/wordnet_adverbs_graph.graphml")
+    nx.write_graphml(G, current_path + "/resources/adverbs/wordnet_adverbs_graph.graphml")
 
 
 def read_adverbs_graph(format='graphml'):
-    return nx.read_graphml("resources/adverbs/wordnet_adverbs_graph.graphml")
+    try:
+        return nx.read_graphml(current_path + "/resources/adverbs/wordnet_adverbs_graph.graphml")
+    except:
+        create_adverbs_graph()
+    return nx.read_graphml(current_path + "/resources/adverbs/wordnet_adverbs_graph.graphml")
 
 
 def simple_adverbs_similarity(G, source, target):
@@ -215,3 +222,14 @@ def multiple_adverbs_similarity(G, source, list_of_targets, evaluation='sum'):
         return sum(length_similarities)
     else:
         return min(length_similarities)
+
+
+if os.path.isfile(current_path + '/resources/adverbs/intensifiers.json'):
+    print 'loading... intensifiers'
+    ints_file = open(current_path + '/resources/adverbs/intensifiers.json')
+    data = json.load(ints_file)
+    intensifiers = Dict(data)
+    ints_file.close()
+else:
+    print 'building... intensifiers'
+    expand_words()
