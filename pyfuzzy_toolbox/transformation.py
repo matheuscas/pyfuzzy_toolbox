@@ -8,6 +8,9 @@ SWN_PRIOR_POLARITY = 0
 SWN = 1
 SUBJECTIVITY_CLUES = 2
 
+# To try something close to Taboada,2011 shifted negation
+
+
 swn_prior_polarity = lexicon.SentiWords()
 
 
@@ -24,8 +27,16 @@ def is_negation(ngram):
         return False
 
 
-def negation_polarity():
-    pass
+def negation_polarity(ngram_polarity, shift_polarity=True, shift=0.75, switch_polarity=False):
+
+    if shift_polarity:
+        if ngram_polarity > 0:
+            return ngram_polarity - shift
+        elif ngram_polarity < 0:
+            return ngram_polarity + shift
+
+    if switch_polarity:
+        return ngram_polarity * (-1)
 
 
 def word_prior_polarity(word, pos_tag=None):
@@ -101,7 +112,10 @@ def get_bigram_polarity(bigram, lexicon=SWN_PRIOR_POLARITY,
                         use_position=True,
                         use_frequency=True,
                         compensate_bias=True,
-                        bias_compensation=0.5):
+                        bias_compensation=0.5,
+                        shift_polarity=True,
+                        shift=0.75,
+                        switch_polarity=False):
 
     unigram_polarity = get_unigram_polarity(bigram.word_2, lexicon=lexicon,
                                             use_position=use_position,
@@ -109,31 +123,37 @@ def get_bigram_polarity(bigram, lexicon=SWN_PRIOR_POLARITY,
                                             compensate_bias=compensate_bias,
                                             bias_compensation=bias_compensation)
 
-    # print '\nbefore - unigram_polarity:', unigram_polarity
-    if bigram.word_1.word in [ints.intensifiers.low.seed] + ints.intensifiers.low.words:
-        unigram_polarity = unigram_polarity + \
-            (unigram_polarity * ints.intensifiers.low.modifier)
-    elif bigram.word_1.word in [ints.intensifiers.very_low.seed] + ints.intensifiers.very_low.words:
-        unigram_polarity = unigram_polarity + \
-            (unigram_polarity * ints.intensifiers.very_low.modifier)
-    elif bigram.word_1.word in [ints.intensifiers.lowest.seed] + ints.intensifiers.lowest.words:
-        unigram_polarity = unigram_polarity + \
-            (unigram_polarity * ints.intensifiers.lowest.modifier)
-    elif bigram.word_1.word in [ints.intensifiers.high.seed] + ints.intensifiers.high.words:
-        unigram_polarity = unigram_polarity + \
-            (unigram_polarity * ints.intensifiers.high.modifier)
-    elif bigram.word_1.word in [ints.intensifiers.very_high.seed] + ints.intensifiers.very_high.words:
-        unigram_polarity = unigram_polarity + \
-            (unigram_polarity * ints.intensifiers.very_high.modifier)
-    elif bigram.word_1.word in [ints.intensifiers.highest.seed] + ints.intensifiers.highest.words:
-        # print 'highest', bigram.word_1.word
-        unigram_polarity = unigram_polarity + \
-            (unigram_polarity * ints.intensifiers.highest.modifier)
-    elif bigram.word_1.word in [ints.intensifiers.most_highest.seed] + ints.intensifiers.most_highest.words:
-        unigram_polarity = unigram_polarity + \
-            (unigram_polarity * ints.intensifiers.most_highest.modifier)
+    if is_negation(bigram):
+        unigram_polarity = negation_polarity(unigram_polarity,
+                                             shift_polarity=True,
+                                             shift=0.75,
+                                             switch_polarity=False)
+    else:
+        # print '\nbefore - unigram_polarity:', unigram_polarity
+        if bigram.word_1.word in [ints.intensifiers.low.seed] + ints.intensifiers.low.words:
+            unigram_polarity = unigram_polarity + \
+                (unigram_polarity * ints.intensifiers.low.modifier)
+        elif bigram.word_1.word in [ints.intensifiers.very_low.seed] + ints.intensifiers.very_low.words:
+            unigram_polarity = unigram_polarity + \
+                (unigram_polarity * ints.intensifiers.very_low.modifier)
+        elif bigram.word_1.word in [ints.intensifiers.lowest.seed] + ints.intensifiers.lowest.words:
+            unigram_polarity = unigram_polarity + \
+                (unigram_polarity * ints.intensifiers.lowest.modifier)
+        elif bigram.word_1.word in [ints.intensifiers.high.seed] + ints.intensifiers.high.words:
+            unigram_polarity = unigram_polarity + \
+                (unigram_polarity * ints.intensifiers.high.modifier)
+        elif bigram.word_1.word in [ints.intensifiers.very_high.seed] + ints.intensifiers.very_high.words:
+            unigram_polarity = unigram_polarity + \
+                (unigram_polarity * ints.intensifiers.very_high.modifier)
+        elif bigram.word_1.word in [ints.intensifiers.highest.seed] + ints.intensifiers.highest.words:
+            # print 'highest', bigram.word_1.word
+            unigram_polarity = unigram_polarity + \
+                (unigram_polarity * ints.intensifiers.highest.modifier)
+        elif bigram.word_1.word in [ints.intensifiers.most_highest.seed] + ints.intensifiers.most_highest.words:
+            unigram_polarity = unigram_polarity + \
+                (unigram_polarity * ints.intensifiers.most_highest.modifier)
 
-    # print 'after - unigram_polarity:', unigram_polarity
+        # print 'after - unigram_polarity:', unigram_polarity
     return unigram_polarity
 
 
@@ -141,7 +161,10 @@ def get_trigram_polarity(trigram, lexicon=SWN_PRIOR_POLARITY,
                          use_position=True,
                          use_frequency=True,
                          compensate_bias=True,
-                         bias_compensation=0.5):
+                         bias_compensation=0.5,
+                         shift_polarity=True,
+                         shift=0.75,
+                         switch_polarity=False):
 
     bigram = pre.Bigram()
     bigram.word_1 = trigram.word_2
@@ -152,26 +175,32 @@ def get_trigram_polarity(trigram, lexicon=SWN_PRIOR_POLARITY,
                                           compensate_bias=compensate_bias,
                                           bias_compensation=bias_compensation)
 
-    if trigram.word_1.word in [ints.intensifiers.low.seed] + ints.intensifiers.low.words:
-        bigram_polarity = bigram_polarity + \
-            (bigram_polarity * ints.intensifiers.low.modifier)
-    elif trigram.word_1.word in [ints.intensifiers.very_low.seed] + ints.intensifiers.very_low.words:
-        bigram_polarity = bigram_polarity + \
-            (bigram_polarity * ints.intensifiers.very_low.modifier)
-    elif trigram.word_1.word in [ints.intensifiers.lowest.seed] + ints.intensifiers.lowest.words:
-        bigram_polarity = bigram_polarity + \
-            (bigram_polarity * ints.intensifiers.lowest.modifier)
-    elif trigram.word_1.word in [ints.intensifiers.high.seed] + ints.intensifiers.high.words:
-        bigram_polarity = bigram_polarity + \
-            (bigram_polarity * ints.intensifiers.high.modifier)
-    elif trigram.word_1.word in [ints.intensifiers.very_high.seed] + ints.intensifiers.very_high.words:
-        bigram_polarity = bigram_polarity + \
-            (bigram_polarity * ints.intensifiers.very_high.modifier)
-    elif trigram.word_1.word in [ints.intensifiers.highest.seed] + ints.intensifiers.highest.words:
-        bigram_polarity = bigram_polarity + \
-            (bigram_polarity * ints.intensifiers.highest.modifier)
-    elif trigram.word_1.word in [ints.intensifiers.most_highest.seed] + ints.intensifiers.most_highest.words:
-        bigram_polarity = bigram_polarity + \
-            (bigram_polarity * ints.intensifiers.most_highest.modifier)
+    if is_negation(trigram):
+        bigram_polarity = negation_polarity(bigram_polarity,
+                                            shift_polarity=True,
+                                            shift=0.75,
+                                            switch_polarity=False)
+    else:
+        if trigram.word_1.word in [ints.intensifiers.low.seed] + ints.intensifiers.low.words:
+            bigram_polarity = bigram_polarity + \
+                (bigram_polarity * ints.intensifiers.low.modifier)
+        elif trigram.word_1.word in [ints.intensifiers.very_low.seed] + ints.intensifiers.very_low.words:
+            bigram_polarity = bigram_polarity + \
+                (bigram_polarity * ints.intensifiers.very_low.modifier)
+        elif trigram.word_1.word in [ints.intensifiers.lowest.seed] + ints.intensifiers.lowest.words:
+            bigram_polarity = bigram_polarity + \
+                (bigram_polarity * ints.intensifiers.lowest.modifier)
+        elif trigram.word_1.word in [ints.intensifiers.high.seed] + ints.intensifiers.high.words:
+            bigram_polarity = bigram_polarity + \
+                (bigram_polarity * ints.intensifiers.high.modifier)
+        elif trigram.word_1.word in [ints.intensifiers.very_high.seed] + ints.intensifiers.very_high.words:
+            bigram_polarity = bigram_polarity + \
+                (bigram_polarity * ints.intensifiers.very_high.modifier)
+        elif trigram.word_1.word in [ints.intensifiers.highest.seed] + ints.intensifiers.highest.words:
+            bigram_polarity = bigram_polarity + \
+                (bigram_polarity * ints.intensifiers.highest.modifier)
+        elif trigram.word_1.word in [ints.intensifiers.most_highest.seed] + ints.intensifiers.most_highest.words:
+            bigram_polarity = bigram_polarity + \
+                (bigram_polarity * ints.intensifiers.most_highest.modifier)
 
     return bigram_polarity

@@ -19,6 +19,13 @@ negative_unigram.doc_word_count = 28
 negative_unigram.word = 'poor'
 negative_unigram_polarity = -0.3325
 
+negation_unigram = pre.Unigram()
+negation_unigram.position = 14
+negation_unigram.frequency = 4
+negation_unigram.doc_word_count = 28
+negation_unigram.word = 'not'
+negation_unigram_polarity = -0.38925
+
 # really
 really_intensifier_unigram = pre.Unigram()
 really_intensifier_unigram.position = 13
@@ -555,3 +562,54 @@ def test_is_negation_false():
 
 	assert trans.is_negation(bigram) == False
 	assert trans.is_negation(trigram) == False
+
+
+def test_get_bigram_polarity_position_true_with_shift_negation():
+
+    bigram.word_1 = negation_unigram
+    bigram.word_2 = positive_unigram
+    expected_polarity = (positive_unigram_polarity *
+                         positive_unigram.position) / positive_unigram.doc_word_count
+    expected_polarity = expected_polarity - 0.75
+    unigram_polarity = trans.get_bigram_polarity(bigram,
+                                                 lexicon=trans.SWN_PRIOR_POLARITY,
+                                                 use_position=True,
+                                                 use_frequency=False,
+                                                 compensate_bias=False,
+                                                 bias_compensation=0.5)
+    nose.tools.assert_almost_equal(expected_polarity, unigram_polarity)
+
+    bigram.word_2 = negative_unigram
+    expected_polarity = (negative_unigram_polarity *
+                         negative_unigram.position) / negative_unigram.doc_word_count
+    expected_polarity = expected_polarity + 0.75
+    unigram_polarity = trans.get_bigram_polarity(bigram,
+                                                 lexicon=trans.SWN_PRIOR_POLARITY,
+                                                 use_position=True,
+                                                 use_frequency=False,
+                                                 compensate_bias=False,
+                                                 bias_compensation=0.5)
+    nose.tools.assert_almost_equal(expected_polarity, unigram_polarity)
+
+
+def test_get_trigram_polarity_position_true_with_shift_negation():
+
+    # intensifies a intensified unigram
+    trigram.word_1 = negation_unigram
+    trigram.word_2 = really_intensifier_unigram
+    trigram.word_3 = positive_unigram
+
+    expected_polarity = (positive_unigram_polarity *
+                         positive_unigram.position) / positive_unigram.doc_word_count
+    expected_polarity = expected_polarity + \
+        (expected_polarity * ints.intensifiers.high.modifier)
+    expected_polarity = expected_polarity - 0.75
+
+    trigram_polarity = trans.get_trigram_polarity(trigram,
+                                                  lexicon=trans.SWN_PRIOR_POLARITY,
+                                                  use_position=True,
+                                                  use_frequency=False,
+                                                  compensate_bias=False,
+                                                  bias_compensation=0.5)
+
+    nose.tools.assert_almost_equal(expected_polarity, trigram_polarity)
