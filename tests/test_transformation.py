@@ -527,3 +527,31 @@ def test_get_trigram_polarity_compensate_bias_true():
                                                   bias_compensation=0.5)
 
     nose.tools.assert_almost_equal(expected_polarity, trigram_polarity)
+
+
+def test_is_negation_true():
+
+	negation_unigram = pre.Unigram()
+	negation_unigram.word = 'not'
+	bigram.word_1 = negation_unigram
+	bigram.word_2 = positive_unigram
+
+	trigram.word_1 = negation_unigram
+	trigram.word_2 = really_intensifier_unigram
+	trigram.word_3 = negative_unigram
+
+	assert trans.is_negation(bigram) == True
+	assert trans.is_negation(trigram) == True
+
+
+def test_is_negation_false():
+
+	bigram.word_1 = really_intensifier_unigram
+	bigram.word_2 = positive_unigram
+
+	trigram.word_1 = really_intensifier_unigram
+	trigram.word_2 = really_intensifier_unigram
+	trigram.word_3 = negative_unigram
+
+	assert trans.is_negation(bigram) == False
+	assert trans.is_negation(trigram) == False

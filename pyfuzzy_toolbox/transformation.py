@@ -15,9 +15,13 @@ def start(bow_sentences):
     pass
 
 
-def is_negation():
+def is_negation(ngram):
     """Detects when a bigram (e.g. not good) or trigam (e.g. not very good) is negated"""
-    pass
+
+    if ngram.word_1.word in pre.NEGATION_WORDS:
+        return True
+    else:
+        return False
 
 
 def negation_polarity():

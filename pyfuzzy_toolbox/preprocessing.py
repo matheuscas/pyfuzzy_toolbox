@@ -134,6 +134,10 @@ def is_bigram(obj):
     return obj.__class__.__name__ == 'Bigram'
 
 
+def is_trigram(obj):
+    return obj.__class__.__name__ == 'Trigram'
+
+
 def print_formatted_sentences(tokenized_sentences):
     for idx, ts in enumerate(tokenized_sentences):
         print ' ----- SENTENCE %d ----- ' % (idx + 1)
