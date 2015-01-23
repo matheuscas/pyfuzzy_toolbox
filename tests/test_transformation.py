@@ -2,6 +2,7 @@ from pyfuzzy_toolbox import transformation as trans
 from pyfuzzy_toolbox import preprocessing as pre
 from pyfuzzy_toolbox import intensifiers as ints
 import nose
+import test_preprocessing as tpre
 
 # expected prior polarity value for 'nice': 0.48759
 positive_unigram = pre.Unigram()
@@ -613,3 +614,13 @@ def test_get_trigram_polarity_position_true_with_shift_negation():
                                                   bias_compensation=0.5)
 
     nose.tools.assert_almost_equal(expected_polarity, trigram_polarity)
+
+
+def test_start_unigram_with_polarities():
+
+	bow_sentences = pre.start(tpre.text_1)
+	bow_sentences = trans.start(bow_sentences)
+
+	for bs in bow_sentences:
+		for ngram in bs:
+			assert hasattr(ngram, 'polarity') == True

@@ -14,8 +14,59 @@ SUBJECTIVITY_CLUES = 2
 swn_prior_polarity = lexicon.SentiWords()
 
 
-def start(bow_sentences):
-    pass
+def start(bow_sentences,
+          lexicon=SWN_PRIOR_POLARITY,
+          use_position=True,
+          use_frequency=True,
+          compensate_bias=True,
+          bias_compensation=0.5,
+          shift_polarity=True,
+          shift=0.75,
+          switch_polarity=False,
+          filter_ngrams=True):
+
+    for bs in bow_sentences:
+        for ngram in bs:
+            if pre.is_unigram(ngram):
+                ngram.polarity = get_unigram_polarity(ngram,
+                                                      lexicon=lexicon,
+                                                      use_position=use_position,
+                                                      use_frequency=use_frequency,
+                                                      compensate_bias=compensate_bias,
+                                                      bias_compensation=bias_compensation)
+            elif pre.is_bigram(ngram):
+                ngram.polarity = get_bigram_polarity(ngram,
+                                                     lexicon=SWN_PRIOR_POLARITY,
+                                                     use_position=use_position,
+                                                     use_frequency=use_frequency,
+                                                     compensate_bias=compensate_bias,
+                                                     bias_compensation=bias_compensation,
+                                                     shift_polarity=shift_polarity,
+                                                     shift=shift,
+                                                     switch_polarity=switch_polarity)
+            elif pre.is_trigram(ngram):
+                ngram.polarity = get_trigram_polarity(ngram,
+                                                      lexicon=SWN_PRIOR_POLARITY,
+                                                      use_position=use_position,
+                                                      use_frequency=use_frequency,
+                                                      compensate_bias=compensate_bias,
+                                                      bias_compensation=bias_compensation,
+                                                      shift_polarity=shift_polarity,
+                                                      shift=shift,
+                                                      switch_polarity=switch_polarity)
+
+    if filter_ngrams:
+        filtered_bow_sentences = []
+        for bs in bow_sentences:
+            filtered_bow_sentence = []
+            for ngram in bs:
+                if ngram.polarity != 0.0:
+                    filtered_bow_sentence.append(ngram)
+            if len(filtered_bow_sentence) > 0:
+                filtered_bow_sentences.append(filtered_bow_sentence)
+        return filtered_bow_sentences
+
+    return bow_sentences
 
 
 def is_negation(ngram):
@@ -34,6 +85,8 @@ def negation_polarity(ngram_polarity, shift_polarity=True, shift=0.75, switch_po
             return ngram_polarity - shift
         elif ngram_polarity < 0:
             return ngram_polarity + shift
+        else:
+            return ngram_polarity
 
     if switch_polarity:
         return ngram_polarity * (-1)
@@ -90,10 +143,18 @@ def get_unigram_polarity(unigram, lexicon=SWN_PRIOR_POLARITY,
 
     polarity = None
     if lexicon == SWN_PRIOR_POLARITY:
-        polarity = word_prior_polarity(
-            unigram.word, pos_tag=unigram.pos_tag)[0]
+        wpp = word_prior_polarity(
+            unigram.word, pos_tag=unigram.pos_tag)
+        if wpp:
+            polarity = wpp[0]
+        else:
+            polarity = 0
     else:
-        polarity = word_swn_polarity(unigram.word, pos_tag=unigram.pos_tag)[0]
+        wpp = word_swn_polarity(unigram.word, pos_tag=unigram.pos_tag)
+        if wpp:
+            polarity = wpp[0]
+        else:
+            polarity = 0
 
     if use_position:
         polarity = (polarity * unigram.position) / \
