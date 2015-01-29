@@ -184,3 +184,12 @@ def count_of_trigrams_scores(bow_sentences, bigram_word_1=ADVS, bigram_word_2=AD
                     _count += 1
 
     return _count
+
+
+def count_selected_ngrams(bow_sentences):
+
+    ngrams_selected = 0
+    for bs in bow_sentences:
+        ngrams_selected = ngrams_selected + len(bs)
+
+    return ngrams_selected

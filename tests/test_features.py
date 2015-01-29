@@ -18,37 +18,26 @@ bow_sentences_2a = pre.start(tpre.text_2a)
 bow_sentences_2a = trans.start(bow_sentences_2a)
 
 
-# adj_count_pos = 0
-# adj_count_neg = 0
-# adv_count_pos = 0
-# adv_count_neg = 0
-# vbz_count_pos = 0
-# vbz_count_neg = 0
-# size = 0
-# for bs in bow_sentences_1a:
-# 	for ngram in bs:
-# 		if pre.is_bigram(ngram) and ngram.word_1.pos_tag in pre.POS_TAGS.ADVS and ngram.word_2.pos_tag in pre.POS_TAGS.ADJS:
-# 			if ngram.polarity > 0:
-# 				adj_count_pos += 1
-# 			elif ngram.polarity < 0:
-# 				adj_count_neg += 1
-# 		elif pre.is_bigram(ngram) and ngram.word_1.pos_tag in pre.POS_TAGS.ADVS and ngram.word_2.pos_tag in pre.POS_TAGS.ADVS:
-# 			if ngram.polarity > 0:
-# 				adv_count_pos += 1
-# 			elif ngram.polarity < 0:
-# 				adv_count_neg += 1
-# 		elif pre.is_bigram(ngram) and ngram.word_1.pos_tag in pre.POS_TAGS.ADVS and ngram.word_2.pos_tag in pre.POS_TAGS.VERBS:
-# 			if ngram.polarity > 0:
-# 				vbz_count_pos += 1
-# 			elif ngram.polarity < 0:
-# 				vbz_count_neg += 1
+ngrams_selected = 0
+for bs in bow_sentences_1:
+	for ngram in bs:
+		ngrams_selected += 1
 
-# print 'adj_count_pos: ', adj_count_pos
-# print 'adj_count_neg: ', adj_count_neg
-# print 'adv_count_pos: ', adv_count_pos
-# print 'adv_count_neg: ', adv_count_neg
-# print 'vbz_count_pos: ', vbz_count_pos
-# print 'vbz_count_neg: ', vbz_count_neg
+print 'ngrams_selected: ', ngrams_selected
+
+ngrams_selected = 0
+for bs in bow_sentences_1a:
+	for ngram in bs:
+		ngrams_selected += 1
+
+print 'ngrams_selected: ', ngrams_selected
+
+ngrams_selected = 0
+for bs in bow_sentences_2a:
+	for ngram in bs:
+		ngrams_selected += 1
+
+print 'ngrams_selected: ', ngrams_selected
 
 """ ----------------------------- SUM FEATURES ----------------------------- """
 
@@ -396,3 +385,9 @@ def test_positive_to_negative_scores_ratio_of_adverbs_count_and_bigrams_with_adv
 def test_positive_to_negative_scores_ratio_of_verbs_count_and_bigrams_with_verbs():
     expected_count = fts.positive_to_negative_ratio_count_unigrams_and_bigrams_scores(bow_sentences_1a, unigram=fts.VERBS, bigram_word_1=fts.ADVS, bigram_word_2=fts.VERBS)
     assert expected_count == (5 + 1) - (0 + 0)
+
+
+def test_count_selected_ngrams():
+	assert fts.count_selected_ngrams(bow_sentences_1) == 17
+	assert fts.count_selected_ngrams(bow_sentences_1a) == 33
+	assert fts.count_selected_ngrams(bow_sentences_2a) == 13
