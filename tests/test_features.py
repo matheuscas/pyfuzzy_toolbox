@@ -17,48 +17,16 @@ print 'Loading test text 2a'
 bow_sentences_2a = pre.start(tpre.text_2a)
 bow_sentences_2a = trans.start(bow_sentences_2a)
 
-max_adjective = -1
-max_adjective_value = 0
-max_adverb = -1
-max_adverb_value = 0
-max_verb = -1
-max_verb_value = 0
-for bs in bow_sentences_1a:
+_count = 0
+_doc_words_count = 0
+for bs in bow_sentences_2a:
     for ngram in bs:
-        if pre.is_unigram(ngram) and ngram.pos_tag in pre.POS_TAGS.ADJS or \
-                pre.is_bigram(ngram) and ngram.word_1.pos_tag in pre.POS_TAGS.ADVS and ngram.word_2.pos_tag in pre.POS_TAGS.ADJS:
-            if abs(ngram.polarity) > abs(max_adjective_value):
-                max_adjective_value = ngram.polarity
-        elif pre.is_unigram(ngram) and ngram.pos_tag in pre.POS_TAGS.ADVS or \
-                pre.is_bigram(ngram) and ngram.word_1.pos_tag in pre.POS_TAGS.ADVS and ngram.word_2.pos_tag in pre.POS_TAGS.ADVS:
-            if abs(ngram.polarity) > abs(max_adverb_value):
-                max_adverb_value = ngram.polarity
-        elif pre.is_unigram(ngram) and ngram.pos_tag in pre.POS_TAGS.VERBS or \
-                pre.is_bigram(ngram) and ngram.word_1.pos_tag in pre.POS_TAGS.ADVS and ngram.word_2.pos_tag in pre.POS_TAGS.VERBS:
-            if abs(ngram.polarity) > abs(max_verb_value):
-                max_verb_value = ngram.polarity
+        if pre.is_bigram(ngram) and ngram.word_1.word in pre.NEGATION_WORDS or \
+        	pre.is_trigram(ngram) and ngram.word_1.word in pre.NEGATION_WORDS:
+        		_doc_words_count = ngram.word_1.doc_word_count
+        		_count += 1
 
-if max_adjective_value != 0:
-    if max_adjective_value < 0:
-        max_adjective = 0
-    else:
-        max_adjective = 1
-
-if max_adverb_value != 0:
-    if max_adverb_value < 0:
-        max_adverb = 0
-    else:
-        max_adverb = 1
-
-if max_verb_value != 0:
-    if max_verb_value < 0:
-        max_verb = 0
-    else:
-        max_verb = 1
-
-print max_adjective, max_adjective_value
-print max_adverb, max_adverb_value
-print max_verb, max_verb_value
+print _count, _count / float(_doc_words_count)        		
 
 """ ----------------------------- SUM FEATURES ----------------------------- """
 
@@ -449,3 +417,11 @@ def test_max_rule_score_for_adverbs_and_bigrams_with_adverbs():
 
 def test_max_rule_score_for_verbs_and_bigrams_with_verbs():
     assert fts.max_rule_score_for_unigrams_and_bigrams(bow_sentences_1a, unigram=fts.VERBS, bigram_word_1=fts.ADVS, bigram_word_2=fts.VERBS) == 1
+
+
+""" ----------------------------- PERCENTAGE FEATURES ----------------------------- """
+
+def test_percentage_of_negated_ngrams_by_document_size():
+	nose.tools.assert_almost_equal(0.00537634408602, fts.percentage_of_negated_ngrams_by_document_size(bow_sentences_1))
+	nose.tools.assert_almost_equal(0.0155763239875, fts.percentage_of_negated_ngrams_by_document_size(bow_sentences_1a))
+	nose.tools.assert_almost_equal(0.0127388535032, fts.percentage_of_negated_ngrams_by_document_size(bow_sentences_2a))
