@@ -17,27 +17,45 @@ print 'Loading test text 2a'
 bow_sentences_2a = pre.start(tpre.text_2a)
 bow_sentences_2a = trans.start(bow_sentences_2a)
 
-
-ngrams_selected = 0
-for bs in bow_sentences_1:
-	for ngram in bs:
-		ngrams_selected += 1
-
-print 'ngrams_selected: ', ngrams_selected
-
-ngrams_selected = 0
+max_adjective = -1
+max_adjective_value = 0
+max_adverb = -1
+max_adverb_value = 0
+max_verb = -1
+max_verb_value = 0
 for bs in bow_sentences_1a:
 	for ngram in bs:
-		ngrams_selected += 1
+		if pre.is_unigram(ngram) and ngram.pos_tag in pre.POS_TAGS.ADJS:
+			if abs(ngram.polarity) > abs(max_adjective_value):
+				max_adjective_value = ngram.polarity
+		elif pre.is_unigram(ngram) and ngram.pos_tag in pre.POS_TAGS.ADVS:
+			if abs(ngram.polarity) > abs(max_adverb_value):
+				max_adverb_value = ngram.polarity
+		elif pre.is_unigram(ngram) and ngram.pos_tag in pre.POS_TAGS.VERBS:
+			if abs(ngram.polarity) > abs(max_verb_value):
+				max_verb_value = ngram.polarity
 
-print 'ngrams_selected: ', ngrams_selected
+if max_adjective_value != 0:
+	if max_adjective_value < 0:
+		max_adjective = 0
+	else:
+		max_adjective = 1
 
-ngrams_selected = 0
-for bs in bow_sentences_2a:
-	for ngram in bs:
-		ngrams_selected += 1
+if max_adverb_value != 0:
+	if max_adverb_value < 0:
+		max_adverb = 0
+	else:
+		max_adverb = 1
 
-print 'ngrams_selected: ', ngrams_selected
+if max_verb_value != 0:
+	if max_verb_value < 0:
+		max_verb = 0
+	else:
+		max_verb = 1
+
+print max_adjective, max_adjective_value
+print max_adverb, max_adverb_value
+print max_verb, max_verb_value
 
 """ ----------------------------- SUM FEATURES ----------------------------- """
 
@@ -391,3 +409,19 @@ def test_count_selected_ngrams():
 	assert fts.count_selected_ngrams(bow_sentences_1) == 17
 	assert fts.count_selected_ngrams(bow_sentences_1a) == 33
 	assert fts.count_selected_ngrams(bow_sentences_2a) == 13
+
+""" ----------------------------- MAX FEATURES ----------------------------- """
+
+"""UNIGRAMS"""
+
+
+def test_max_rule_score_for_adjective():
+	assert fts.max_rule_score_for_adjective(bow_sentences_1a, unigram=fts.ADJS) == 0
+
+
+def test_max_rule_score_for_adverbs():
+	assert fts.max_rule_score_for_adjective(bow_sentences_1a, unigram=fts.ADVS) == 1
+
+
+def test_max_rule_score_for_verbs():
+	assert fts.max_rule_score_for_adjective(bow_sentences_1a, unigram=fts.VERBS) == 1
