@@ -109,3 +109,25 @@ def sum_of_trigrams_scores(bow_sentences, bigram_word_1=ADVS, bigram_word_2=ADVS
                     doc_word_count = ngram.word_3.doc_word_count
 
     return _sum if not ratio else (_sum / float(doc_word_count))
+
+
+def count_of_unigrams_scores(bow_sentences, unigram=ADJS, positive=True):
+
+    pos_tags_codes = set_pos_tags_codes(unigram)
+
+    polarity_eval_stm = set_ngram_polarity_statement(positive=positive)
+
+    _count = 0
+    for bs in bow_sentences:
+        for ngram in bs:
+            if pre.is_unigram(ngram) and ngram.pos_tag in pos_tags_codes and eval(polarity_eval_stm):
+                _count += 1
+
+    return _count
+
+
+def positive_to_negative_ratio_count_unigrams_scores(bow_sentences, unigram=ADJS):
+    positive_sum = count_of_unigrams_scores(bow_sentences, unigram=unigram)
+    negative_sum = count_of_unigrams_scores(
+        bow_sentences, unigram=unigram, positive=False)
+    return positive_sum - negative_sum

@@ -18,12 +18,39 @@ bow_sentences_2b = pre.start(tpre.text_2b)
 bow_sentences_2b = trans.start(bow_sentences_2b)
 
 
-_sum = 0
-size = 0
-for bs in bow_sentences_2b:
-	for ngram in bs:
-		if pre.is_trigram(ngram):
-			print ngram, ngram.polarity
+# adj_count_pos = 0
+# adj_count_neg = 0
+# adv_count_pos = 0
+# adv_count_neg = 0
+# vbz_count_pos = 0
+# vbz_count_neg = 0
+# size = 0
+# for bs in bow_sentences_1a:
+# 	for ngram in bs:
+# 		if pre.is_unigram(ngram) and ngram.pos_tag in pre.POS_TAGS.ADJS:
+# 			if ngram.polarity > 0:
+# 				adj_count_pos += 1
+# 			elif ngram.polarity < 0:
+# 				adj_count_neg += 1
+# 		elif pre.is_unigram(ngram) and ngram.pos_tag in pre.POS_TAGS.ADVS:
+# 			if ngram.polarity > 0:
+# 				adv_count_pos += 1
+# 			elif ngram.polarity < 0:
+# 				adv_count_neg += 1
+# 		elif pre.is_unigram(ngram) and ngram.pos_tag in pre.POS_TAGS.VERBS:
+# 			if ngram.polarity > 0:
+# 				vbz_count_pos += 1
+# 			elif ngram.polarity < 0:
+# 				vbz_count_neg += 1
+
+# print 'adj_count_pos: ', adj_count_pos
+# print 'adj_count_neg: ', adj_count_neg
+# print 'adv_count_pos: ', adv_count_pos
+# print 'adv_count_neg: ', adv_count_neg
+# print 'vbz_count_pos: ', vbz_count_pos
+# print 'vbz_count_neg: ', vbz_count_neg
+
+""" ----------------------------- SUM FEATURES ----------------------------- """
 
 """UNIGRAMS"""
 
@@ -209,3 +236,53 @@ def test_positive_to_negative_ratio_sum_scores_verbs_and_bigrams_with_verbs():
 	expected_ratio_sum = 0.6762623655913979
 	positive_to_negative_ratio_sum = fts.positive_to_negative_ratio_sum_unigrams_and_bigrams_scores(bow_sentences_1, unigram=fts.VERBS, bigram_word_1=fts.ADVS, bigram_word_2=fts.VERBS)
 	nose.tools.assert_almost_equal(expected_ratio_sum, positive_to_negative_ratio_sum)
+
+
+""" ----------------------------- COUNT FEATURES ----------------------------- """
+
+"""UNIGRAMS"""
+
+
+def test_positive_scores_adjectives_count():
+	expected_count = fts.count_of_unigrams_scores(bow_sentences_1a, unigram=fts.ADJS, positive=True)
+	assert expected_count == 16
+
+
+def test_negative_scores_adjectives_count():
+	expected_count = fts.count_of_unigrams_scores(bow_sentences_1a, unigram=fts.ADJS, positive=False)
+	assert expected_count == 4
+
+
+def test_positive_scores_adverbs_count():
+	expected_count = fts.count_of_unigrams_scores(bow_sentences_1a, unigram=fts.ADVS, positive=True)
+	assert expected_count == 1
+
+
+def test_negative_scores_adverbs_count():
+	expected_count = fts.count_of_unigrams_scores(bow_sentences_1a, unigram=fts.ADVS, positive=False)
+	assert expected_count == 2
+
+
+def test_positive_scores_verbs_count():
+	expected_count = fts.count_of_unigrams_scores(bow_sentences_1a, unigram=fts.VERBS, positive=True)
+	assert expected_count == 5
+
+
+def test_negative_scores_verbs_count():
+	expected_count = fts.count_of_unigrams_scores(bow_sentences_1a, unigram=fts.VERBS, positive=False)
+	assert expected_count == 0
+
+
+def test_positive_to_negative_scores_ratio_of_adjectives_count():
+	expected_count = fts.positive_to_negative_ratio_count_unigrams_scores(bow_sentences_1a, unigram=fts.ADJS)
+	assert expected_count == (16 - 4)
+
+
+def test_positive_to_negative_scores_ratio_of_adverbs_count():
+	expected_count = fts.positive_to_negative_ratio_count_unigrams_scores(bow_sentences_1a, unigram=fts.ADVS)
+	assert expected_count == (1 - 2)
+
+
+def test_positive_to_negative_scores_ratio_of_verbs_count():
+	expected_count = fts.positive_to_negative_ratio_count_unigrams_scores(bow_sentences_1a, unigram=fts.VERBS)
+	assert expected_count == (5 - 0)
