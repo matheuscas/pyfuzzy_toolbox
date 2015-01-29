@@ -1,6 +1,7 @@
 Pattern==2.6
 addict==0.2.7
 decorator==3.4.0
+liac-arff==2.0.1
 matplotlib==1.4.2
 mock==1.0.1
 networkx==1.9.1
