@@ -24,34 +24,37 @@ max_adverb_value = 0
 max_verb = -1
 max_verb_value = 0
 for bs in bow_sentences_1a:
-	for ngram in bs:
-		if pre.is_unigram(ngram) and ngram.pos_tag in pre.POS_TAGS.ADJS:
-			if abs(ngram.polarity) > abs(max_adjective_value):
-				max_adjective_value = ngram.polarity
-		elif pre.is_unigram(ngram) and ngram.pos_tag in pre.POS_TAGS.ADVS:
-			if abs(ngram.polarity) > abs(max_adverb_value):
-				max_adverb_value = ngram.polarity
-		elif pre.is_unigram(ngram) and ngram.pos_tag in pre.POS_TAGS.VERBS:
-			if abs(ngram.polarity) > abs(max_verb_value):
-				max_verb_value = ngram.polarity
+    for ngram in bs:
+        if pre.is_unigram(ngram) and ngram.pos_tag in pre.POS_TAGS.ADJS or \
+                pre.is_bigram(ngram) and ngram.word_1.pos_tag in pre.POS_TAGS.ADVS and ngram.word_2.pos_tag in pre.POS_TAGS.ADJS:
+            if abs(ngram.polarity) > abs(max_adjective_value):
+                max_adjective_value = ngram.polarity
+        elif pre.is_unigram(ngram) and ngram.pos_tag in pre.POS_TAGS.ADVS or \
+                pre.is_bigram(ngram) and ngram.word_1.pos_tag in pre.POS_TAGS.ADVS and ngram.word_2.pos_tag in pre.POS_TAGS.ADVS:
+            if abs(ngram.polarity) > abs(max_adverb_value):
+                max_adverb_value = ngram.polarity
+        elif pre.is_unigram(ngram) and ngram.pos_tag in pre.POS_TAGS.VERBS or \
+                pre.is_bigram(ngram) and ngram.word_1.pos_tag in pre.POS_TAGS.ADVS and ngram.word_2.pos_tag in pre.POS_TAGS.VERBS:
+            if abs(ngram.polarity) > abs(max_verb_value):
+                max_verb_value = ngram.polarity
 
 if max_adjective_value != 0:
-	if max_adjective_value < 0:
-		max_adjective = 0
-	else:
-		max_adjective = 1
+    if max_adjective_value < 0:
+        max_adjective = 0
+    else:
+        max_adjective = 1
 
 if max_adverb_value != 0:
-	if max_adverb_value < 0:
-		max_adverb = 0
-	else:
-		max_adverb = 1
+    if max_adverb_value < 0:
+        max_adverb = 0
+    else:
+        max_adverb = 1
 
 if max_verb_value != 0:
-	if max_verb_value < 0:
-		max_verb = 0
-	else:
-		max_verb = 1
+    if max_verb_value < 0:
+        max_verb = 0
+    else:
+        max_verb = 1
 
 print max_adjective, max_adjective_value
 print max_adverb, max_adverb_value
@@ -391,24 +394,27 @@ def test_negative_scores_verbs_count_and_bigrams_with_verbs():
 
 
 def test_positive_to_negative_scores_ratio_of_adjectives_count_and_bigrams_with_adjectives():
-    expected_count = fts.positive_to_negative_ratio_count_unigrams_and_bigrams_scores(bow_sentences_1a, unigram=fts.ADJS, bigram_word_1=fts.ADVS, bigram_word_2=fts.ADJS)
+    expected_count = fts.positive_to_negative_ratio_count_unigrams_and_bigrams_scores(
+        bow_sentences_1a, unigram=fts.ADJS, bigram_word_1=fts.ADVS, bigram_word_2=fts.ADJS)
     assert expected_count == (16 + 1) - (4 + 3)
 
 
 def test_positive_to_negative_scores_ratio_of_adverbs_count_and_bigrams_with_adverbs():
-    expected_count = fts.positive_to_negative_ratio_count_unigrams_and_bigrams_scores(bow_sentences_1a, unigram=fts.ADVS, bigram_word_1=fts.ADVS, bigram_word_2=fts.ADVS)
+    expected_count = fts.positive_to_negative_ratio_count_unigrams_and_bigrams_scores(
+        bow_sentences_1a, unigram=fts.ADVS, bigram_word_1=fts.ADVS, bigram_word_2=fts.ADVS)
     assert expected_count == (1 + 0) - (2 + 0)
 
 
 def test_positive_to_negative_scores_ratio_of_verbs_count_and_bigrams_with_verbs():
-    expected_count = fts.positive_to_negative_ratio_count_unigrams_and_bigrams_scores(bow_sentences_1a, unigram=fts.VERBS, bigram_word_1=fts.ADVS, bigram_word_2=fts.VERBS)
+    expected_count = fts.positive_to_negative_ratio_count_unigrams_and_bigrams_scores(
+        bow_sentences_1a, unigram=fts.VERBS, bigram_word_1=fts.ADVS, bigram_word_2=fts.VERBS)
     assert expected_count == (5 + 1) - (0 + 0)
 
 
 def test_count_selected_ngrams():
-	assert fts.count_selected_ngrams(bow_sentences_1) == 17
-	assert fts.count_selected_ngrams(bow_sentences_1a) == 33
-	assert fts.count_selected_ngrams(bow_sentences_2a) == 13
+    assert fts.count_selected_ngrams(bow_sentences_1) == 17
+    assert fts.count_selected_ngrams(bow_sentences_1a) == 33
+    assert fts.count_selected_ngrams(bow_sentences_2a) == 13
 
 """ ----------------------------- MAX FEATURES ----------------------------- """
 
@@ -416,12 +422,30 @@ def test_count_selected_ngrams():
 
 
 def test_max_rule_score_for_adjective():
-	assert fts.max_rule_score_for_adjective(bow_sentences_1a, unigram=fts.ADJS) == 0
+    assert fts.max_rule_score_for_unigrams(
+        bow_sentences_1a, unigram=fts.ADJS)['sign'] == 0
 
 
 def test_max_rule_score_for_adverbs():
-	assert fts.max_rule_score_for_adjective(bow_sentences_1a, unigram=fts.ADVS) == 1
+    assert fts.max_rule_score_for_unigrams(
+        bow_sentences_1a, unigram=fts.ADVS)['sign'] == 1
 
 
 def test_max_rule_score_for_verbs():
-	assert fts.max_rule_score_for_adjective(bow_sentences_1a, unigram=fts.VERBS) == 1
+    assert fts.max_rule_score_for_unigrams(
+        bow_sentences_1a, unigram=fts.VERBS)['sign'] == 1
+
+
+"""BIGRAMS"""
+
+
+def test_max_rule_score_for_adjective_and_bigrams_with_adjectives():
+    assert fts.max_rule_score_for_unigrams_and_bigrams(bow_sentences_1a, unigram=fts.ADJS, bigram_word_1=fts.ADVS, bigram_word_2=fts.ADJS) == 0
+
+
+def test_max_rule_score_for_adverbs_and_bigrams_with_adverbs():
+    assert fts.max_rule_score_for_unigrams_and_bigrams(bow_sentences_1a, unigram=fts.ADVS, bigram_word_1=fts.ADVS, bigram_word_2=fts.ADVS) == 1
+
+
+def test_max_rule_score_for_verbs_and_bigrams_with_verbs():
+    assert fts.max_rule_score_for_unigrams_and_bigrams(bow_sentences_1a, unigram=fts.VERBS, bigram_word_1=fts.ADVS, bigram_word_2=fts.VERBS) == 1
