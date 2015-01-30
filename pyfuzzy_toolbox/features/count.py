@@ -345,12 +345,12 @@ def all(bow_sentences,
             features_list.append(
                 positive_verbs_count_and_bigrams_with_verbs(bow_sentences))
             features_list.append(
-                positive_verbs_count_and_bigrams_with_verbs(bow_sentences))
+                negative_verbs_count_and_bigrams_with_verbs(bow_sentences))
         elif non_general_bigram_type == ADJS_AND_BI_ADV_ADJ:
             features_list.append(
                 positive_adjectives_count_and_bigrams_with_adjectives(bow_sentences))
             features_list.append(
-                positive_adjectives_count_and_bigrams_with_adjectives(bow_sentences))
+                negative_adjectives_count_and_bigrams_with_adjectives(bow_sentences))
         else:
             features_list.append(
                 positive_adverbs_count_and_bigrams_with_adverbs(bow_sentences))
@@ -359,11 +359,11 @@ def all(bow_sentences,
             features_list.append(
                 positive_verbs_count_and_bigrams_with_verbs(bow_sentences))
             features_list.append(
-                positive_verbs_count_and_bigrams_with_verbs(bow_sentences))
+                negative_verbs_count_and_bigrams_with_verbs(bow_sentences))
             features_list.append(
                 positive_adjectives_count_and_bigrams_with_adjectives(bow_sentences))
             features_list.append(
-                positive_adjectives_count_and_bigrams_with_adjectives(bow_sentences))
+                negative_adjectives_count_and_bigrams_with_adjectives(bow_sentences))
 
     if non_general_unigrams_and_bigrams_ratio:
         features_list.append(

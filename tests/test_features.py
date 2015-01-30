@@ -435,10 +435,10 @@ def test_all_count_features():
 
     bow_sentences_1_dict = {'attributes': attributes, 'data': data}
 
-    print bow_sentences_1_dict['attributes']
-    print '------------------------------------------'
-    print bow_sentences_1_dict['data']
-    assert len(bow_sentences_1_dict['attributes']) == len(bow_sentences_1_dict['data'])
+    # print bow_sentences_1_dict['attributes']
+    # print '------------------------------------------'
+    # print bow_sentences_1_dict['data']
+    assert len(bow_sentences_1_dict['attributes']) == len(bow_sentences_1_dict['data']) == 25
 
 
 def test_all_sum_features():
@@ -453,7 +453,7 @@ def test_all_sum_features():
 
     bow_sentences_1_dict = {'attributes': attributes, 'data': data}
 
-    print bow_sentences_1_dict['attributes']
-    print '------------------------------------------'
-    print bow_sentences_1_dict['data']
+    # print bow_sentences_1_dict['attributes']
+    # print '------------------------------------------'
+    # print bow_sentences_1_dict['data']
     assert len(bow_sentences_1_dict['attributes']) == len(bow_sentences_1_dict['data']) == 40
