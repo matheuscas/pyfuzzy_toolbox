@@ -3,6 +3,7 @@ from pyfuzzy_toolbox import preprocessing as pre
 from pyfuzzy_toolbox.features.count import *
 from pyfuzzy_toolbox.features.max import *
 from pyfuzzy_toolbox.features.sum import *
+from pyfuzzy_toolbox.features.base import *
 import test_preprocessing as tpre
 import nose
 
@@ -413,7 +414,19 @@ def test_max_rule_score_for_verbs_and_bigrams_with_verbs():
 
 """ ----------------------------- PERCENTAGE FEATURES ----------------------------- """
 
+
 def test_percentage_of_negated_ngrams_by_document_size():
 	nose.tools.assert_almost_equal(0.00537634408602, percentage_of_negated_ngrams_by_document_size(bow_sentences_1))
 	nose.tools.assert_almost_equal(0.0155763239875, percentage_of_negated_ngrams_by_document_size(bow_sentences_1a))
 	nose.tools.assert_almost_equal(0.0127388535032, percentage_of_negated_ngrams_by_document_size(bow_sentences_2a))
+
+
+""" ----------------------------- MODULE TESTS ----------------------------- """
+
+
+def test_start():
+    bow_sentences_1_dict = start(bow_sentences_1)
+    print bow_sentences_1_dict['attributes']
+    print '------------------------------------------'
+    print bow_sentences_1_dict['data']
+    assert len(bow_sentences_1_dict['attributes']) == len(bow_sentences_1_dict['data'])
