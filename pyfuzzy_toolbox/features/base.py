@@ -32,11 +32,11 @@ def start(bow_sentences,
                                                   unigrams_and_bigrams_trigram=unigrams_and_bigrams_trigram,
                                                   unigrams_and_bigrams_trigram_ratio=unigrams_and_bigrams_trigram_ratio)
 
-        attributes = []
-        data = []
+    attributes = []
+    data = []
 
-        for fl in features_list:
-            attributes.append((fl['name'], 'REAL'))
-            data.append(fl['value'])
+    for fl in features_list:
+        attributes.append((fl['name'], 'REAL'))
+        data.append(fl['value'])
 
-        return {'attributes': attributes, 'data': data}
+    return {'attributes': attributes, 'data': data}
