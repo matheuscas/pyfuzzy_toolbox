@@ -1,12 +1,14 @@
 from . import ALL, ALL_NON_GENERAL_BIGRAMS
 import count
+import sum
 
 
 def start(bow_sentences,
           bow_sentences_ground_polarity=1,
           count_features=True,
-          unigrams_only=True,
-          unigrams_only_ratio=True,
+          sum_features=True,
+          unigrams=True,
+          unigrams_ratio=True,
           unigram_type=ALL,
           non_general_unigrams_and_bigrams=True,
           non_general_unigrams_and_bigrams_ratio=True,
@@ -20,8 +22,8 @@ def start(bow_sentences,
     features_list = []
     if count_features:
         features_list = features_list + count.all(bow_sentences,
-                                                  unigrams_only=unigrams_only,
-                                                  unigrams_only_ratio=unigrams_only_ratio,
+                                                  unigrams_only=unigrams,
+                                                  unigrams_only_ratio=unigrams_ratio,
                                                   unigram_type=unigram_type,
                                                   non_general_unigrams_and_bigrams=non_general_unigrams_and_bigrams,
                                                   non_general_unigrams_and_bigrams_ratio=non_general_unigrams_and_bigrams_ratio,
@@ -31,6 +33,19 @@ def start(bow_sentences,
                                                   general_unigrams_and_bigrams_ratio=general_unigrams_and_bigrams_ratio,
                                                   unigrams_and_bigrams_trigram=unigrams_and_bigrams_trigram,
                                                   unigrams_and_bigrams_trigram_ratio=unigrams_and_bigrams_trigram_ratio)
+
+    if sum_features:
+        features_list = features_list + sum.all(bow_sentences,
+                                                unigrams=unigrams,
+                                                unigrams_ratio=unigrams_ratio,
+                                                unigram_type=ALL,
+                                                non_general_unigrams_and_bigrams=non_general_unigrams_and_bigrams,
+                                                non_general_unigrams_and_bigrams_ratio=non_general_unigrams_and_bigrams_ratio,
+                                                non_general_bigram_type=ALL_NON_GENERAL_BIGRAMS,
+                                                general_unigrams_and_bigrams=general_unigrams_and_bigrams,
+                                                general_unigrams_and_bigrams_ratio=general_unigrams_and_bigrams_ratio,
+                                                unigrams_and_bigrams_trigram=unigrams_and_bigrams_trigram,
+                                                unigrams_and_bigrams_trigram_ratio=unigrams_and_bigrams_trigram_ratio)
 
     attributes = []
     data = []
