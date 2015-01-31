@@ -1,12 +1,14 @@
 from . import ALL, ALL_NON_GENERAL_BIGRAMS
 import count
 import sum
+import max
 
 
 def start(bow_sentences,
-          bow_sentences_ground_polarity=1,
+          bow_sentences_ground_polarity,
           count_features=True,
           sum_features=True,
+          max_features=True,
           unigrams=True,
           unigrams_ratio=True,
           unigram_type=ALL,
@@ -41,11 +43,20 @@ def start(bow_sentences,
                                                 unigram_type=ALL,
                                                 non_general_unigrams_and_bigrams=non_general_unigrams_and_bigrams,
                                                 non_general_unigrams_and_bigrams_ratio=non_general_unigrams_and_bigrams_ratio,
-                                                non_general_bigram_type=ALL_NON_GENERAL_BIGRAMS,
+                                                non_general_bigram_type=non_general_bigram_type,
                                                 general_unigrams_and_bigrams=general_unigrams_and_bigrams,
                                                 general_unigrams_and_bigrams_ratio=general_unigrams_and_bigrams_ratio,
                                                 unigrams_and_bigrams_trigram=unigrams_and_bigrams_trigram,
                                                 unigrams_and_bigrams_trigram_ratio=unigrams_and_bigrams_trigram_ratio)
+
+    if max_features:
+        features_list = features_list + max.all(bow_sentences,
+                                                unigrams=unigrams,
+                                                unigram_type=ALL,
+                                                non_general_unigrams_and_bigrams=non_general_unigrams_and_bigrams,
+                                                non_general_bigram_type=non_general_bigram_type,
+                                                general_unigrams_and_bigrams=general_unigrams_and_bigrams,
+                                                unigrams_and_bigrams_trigram=unigrams_and_bigrams_trigram)
 
     attributes = []
     data = []

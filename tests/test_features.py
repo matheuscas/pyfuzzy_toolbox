@@ -457,3 +457,21 @@ def test_all_sum_features():
     # print '------------------------------------------'
     # print bow_sentences_1_dict['data']
     assert len(bow_sentences_1_dict['attributes']) == len(bow_sentences_1_dict['data']) == 40
+
+
+def test_all_max_features():
+    features_list = max_features.all(bow_sentences_1)
+
+    attributes = []
+    data = []
+
+    for fl in features_list:
+        attributes.append((fl['name'], 'REAL'))
+        data.append(fl['value'])
+
+    bow_sentences_1_dict = {'attributes': attributes, 'data': data}
+
+    # print bow_sentences_1_dict['attributes']
+    # print '------------------------------------------'
+    # print bow_sentences_1_dict['data']
+    assert len(bow_sentences_1_dict['attributes']) == len(bow_sentences_1_dict['data']) == 8
