@@ -3,6 +3,11 @@ import count
 import sum
 import max
 
+REAL_POSITIVE_POLARITY = 1
+REAL_NEGATIVE_POLARITY = 0
+NOMINAL_POSITIVE_POLARITY = 'positive'
+NOMINAL_NEGATIVE_POLARITY = 'negative'
+
 
 def start(bow_sentences,
           bow_sentences_ground_polarity,
@@ -64,5 +69,12 @@ def start(bow_sentences,
     for fl in features_list:
         attributes.append((fl['name'], 'REAL'))
         data.append(fl['value'])
+
+    polarity_type = 'REAL'
+    if type(bow_sentences_ground_polarity) == str:
+        polarity_type = ['positive','negative']
+
+    attributes.append('polarity', polarity_type)
+    data.append(bow_sentences_ground_polarity)
 
     return {'attributes': attributes, 'data': data}
