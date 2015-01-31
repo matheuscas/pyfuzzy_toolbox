@@ -74,7 +74,7 @@ def start(bow_sentences,
     if type(bow_sentences_ground_polarity) == str:
         polarity_type = ['positive','negative']
 
-    attributes.append('polarity', polarity_type)
+    attributes.append(('polarity', polarity_type))
     data.append(bow_sentences_ground_polarity)
 
     return {'attributes': attributes, 'data': data}

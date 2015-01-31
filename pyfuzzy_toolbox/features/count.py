@@ -178,7 +178,7 @@ def positive_verbs_count(bow_sentences):
 
 def negative_verbs_count(bow_sentences):
     return {'value': count_of_unigrams_scores(
-            bow_sentences, unigram=VERBS, positive=False), 'name': 'positive_verbs_count'}
+            bow_sentences, unigram=VERBS, positive=False), 'name': 'negative_verbs_count'}
 
 
 def positive_to_negative_ratio_of_adjectives_count(bow_sentences):

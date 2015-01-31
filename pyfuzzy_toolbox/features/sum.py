@@ -122,7 +122,7 @@ def positive_verbs_sum(bow_sentences):
 
 def negative_verbs_sum(bow_sentences):
     return {'value': sum_of_unigrams_scores(
-            bow_sentences, unigram=VERBS, positive=False), 'name': 'positive_verbs_sum'}
+            bow_sentences, unigram=VERBS, positive=False), 'name': 'negative_verbs_sum'}
 
 
 def sum_ratio_of_positive_adjectives(bow_sentences):

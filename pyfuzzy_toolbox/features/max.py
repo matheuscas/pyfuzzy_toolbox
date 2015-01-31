@@ -130,7 +130,6 @@ def max_rule_for_unigrams_bigrams_and_trigrams(bow_sentences):
     result = {
         'value': None, 'name': 'max_rule_for_unigrams_bigrams_and_trigrams'}
 
-    print unigram_sign_and_value['sign'], bigram_sign_and_value['sign'], max_tri['sign']
     if unigram_sign_and_value['sign'] == -1 and bigram_sign_and_value['sign'] == -1 and max_tri['sign'] == -1:
         result['value'] = -1
     elif unigram_sign_and_value['sign'] != -1 and bigram_sign_and_value['sign'] == -1 and max_tri['sign'] == -1:
