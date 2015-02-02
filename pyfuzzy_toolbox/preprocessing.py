@@ -215,14 +215,16 @@ def turn_into_bag_of_words(list_of_sentences, adj=True, verbs=True, adv=True, bi
         tokenized_sen = []
         position = 0
         for (word, tag) in sentence.tags:  # TODO configure the proper tagger
-            position = position + 1
-            unigram = Unigram()
-            unigram.word = word
-            unigram.pos_tag = POS_TAGS[tag] if POS_TAGS[tag] else 0
-            unigram.position = position
-            unigram.frequency = filtered_text_blob.word_counts[word]
-            unigram.doc_word_count = tokens_qtd
-            tokenized_sen.append(unigram)
+            word_counts = filtered_text_blob.word_counts[word]
+            if word_counts > 0:
+                position = position + 1
+                unigram = Unigram()
+                unigram.word = word
+                unigram.pos_tag = POS_TAGS[tag] if POS_TAGS[tag] else 0
+                unigram.position = position
+                unigram.frequency = word_counts
+                unigram.doc_word_count = tokens_qtd
+                tokenized_sen.append(unigram)
         tokenized_sentences.append(tokenized_sen)
 
     # if set search for trigrams
