@@ -22,7 +22,7 @@ def create_arff_file(arff_dict, name=None, timestamp=False):
 	file_name = name if name else arff_dict.relation
 	if timestamp:
 		ts = time.time()
-		st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d_%H:%M:%S')
+		st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d_%H-%M-%S')
 		file_name = file_name + '_' + st
 	file_name = file_name + '.arff'
 	raw_dict = arff_dict.to_dict()
