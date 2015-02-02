@@ -153,6 +153,8 @@ def max_rule_for_unigrams_bigrams_and_trigrams(bow_sentences):
     		result['value'] = bigram_sign_and_value['sign']
     	else:
     		result['value'] = max_tri['sign']
+    elif unigram_sign_and_value['sign'] == bigram_sign_and_value['sign'] and max_tri['sign'] == bigram_sign_and_value['sign']:
+        result['value'] = unigram_sign_and_value['sign']
 
     return result
 
