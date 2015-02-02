@@ -36,7 +36,7 @@ def start(bow_sentences,
                                                       bias_compensation=bias_compensation)
             elif pre.is_bigram(ngram):
                 ngram.polarity = get_bigram_polarity(ngram,
-                                                     lexicon=SWN_PRIOR_POLARITY,
+                                                     lexicon=lexicon,
                                                      use_position=use_position,
                                                      use_frequency=use_frequency,
                                                      compensate_bias=compensate_bias,
@@ -46,7 +46,7 @@ def start(bow_sentences,
                                                      switch_polarity=switch_polarity)
             elif pre.is_trigram(ngram):
                 ngram.polarity = get_trigram_polarity(ngram,
-                                                      lexicon=SWN_PRIOR_POLARITY,
+                                                      lexicon=lexicon,
                                                       use_position=use_position,
                                                       use_frequency=use_frequency,
                                                       compensate_bias=compensate_bias,
