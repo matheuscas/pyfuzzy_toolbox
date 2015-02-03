@@ -139,22 +139,34 @@ def max_rule_for_unigrams_bigrams_and_trigrams(bow_sentences):
     elif unigram_sign_and_value['sign'] == -1 and bigram_sign_and_value['sign'] == -1 and max_tri['sign'] != -1:
         result['value'] = max_tri['sign']
     elif unigram_sign_and_value['sign'] != -1 and bigram_sign_and_value['sign'] != -1 and max_tri['sign'] == -1:
-    	if abs(unigram_sign_and_value['value']) > abs(bigram_sign_and_value['value']):
-    		result['value'] = unigram_sign_and_value['sign']
-    	else:
-    		result['value'] = bigram_sign_and_value['sign']
+        if abs(unigram_sign_and_value['value']) > abs(bigram_sign_and_value['value']):
+            result['value'] = unigram_sign_and_value['sign']
+        else:
+            result['value'] = bigram_sign_and_value['sign']
     elif unigram_sign_and_value['sign'] != -1 and bigram_sign_and_value['sign'] == -1 and max_tri['sign'] != -1:
-    	if abs(unigram_sign_and_value['value']) > abs(max_tri['value']):
-    		result['value'] = unigram_sign_and_value['sign']
-    	else:
-    		result['value'] = max_tri['sign']
+        if abs(unigram_sign_and_value['value']) > abs(max_tri['value']):
+            result['value'] = unigram_sign_and_value['sign']
+        else:
+            result['value'] = max_tri['sign']
     elif unigram_sign_and_value['sign'] == -1 and bigram_sign_and_value['sign'] != -1 and max_tri['sign'] != -1:
-    	if abs(bigram_sign_and_value['value']) > abs(max_tri['value']):
-    		result['value'] = bigram_sign_and_value['sign']
-    	else:
-    		result['value'] = max_tri['sign']
+        if abs(bigram_sign_and_value['value']) > abs(max_tri['value']):
+            result['value'] = bigram_sign_and_value['sign']
+        else:
+            result['value'] = max_tri['sign']
     elif unigram_sign_and_value['sign'] == bigram_sign_and_value['sign'] and max_tri['sign'] == bigram_sign_and_value['sign']:
         result['value'] = unigram_sign_and_value['sign']
+    elif unigram_sign_and_value['sign'] != -1 and bigram_sign_and_value['sign'] != -1 and max_tri['sign'] != -1:
+        if abs(unigram_sign_and_value['value']) >= abs(bigram_sign_and_value['value']) or \
+                abs(unigram_sign_and_value['value']) >= abs(max_tri['value']):
+            result['value'] = unigram_sign_and_value['sign']
+        elif abs(bigram_sign_and_value['value']) >= abs(unigram_sign_and_value['value']) or \
+                abs(bigram_sign_and_value['value']) >= abs(max_tri['value']):
+            result['value'] = bigram_sign_and_value['sign']
+        else:
+            result['value'] = max_tri['sign']
+
+    if result['value'] != -1 and None:
+        print unigram_sign_and_value['sign'], bigram_sign_and_value['sign'], max_tri['sign']
 
     return result
 
