@@ -134,6 +134,17 @@ def count_selected_ngrams(bow_sentences):
     return ngrams_selected
 
 
+def document_size(bow_sentences):
+    for bs in bow_sentences:
+        for ngram in bs:
+            if pre.is_unigram(ngram):
+                return ngram.doc_word_count
+            if pre.is_bigram(ngram):
+                return ngram.word_2.doc_word_count
+            if pre.is_trigram(ngram):
+                return ngram.word_3.doc_word_count
+
+
 def percentage_of_negated_ngrams_by_document_size(bow_sentences):
 
     _count = 0
@@ -280,6 +291,10 @@ def selected_ngrams_count(bow_sentences):
     return {'value': count_selected_ngrams(bow_sentences), 'name': 'selected_ngrams_count'}
 
 
+def original_document_size(bow_sentences):
+    return {'value': document_size(bow_sentences), 'name': 'original_document_size'}
+
+
 def all(bow_sentences,
         unigrams_only=True,
         unigrams_only_ratio=True,
@@ -375,12 +390,15 @@ def all(bow_sentences,
 
     if ngrams_count:
         features_list.append(selected_ngrams_count(bow_sentences))
+        features_list.append(original_document_size(bow_sentences))
 
     if general_unigrams_and_bigrams:
         features_list.append(
             positive_unigrams_and_bigrams_count(bow_sentences))
         features_list.append(
             negative_unigrams_and_bigrams_count(bow_sentences))
+        features_list.append(
+            percentage_of_negated_ngrams_by_document_size(bow_sentences))
 
     if general_unigrams_and_bigrams_ratio:
         features_list.append(
