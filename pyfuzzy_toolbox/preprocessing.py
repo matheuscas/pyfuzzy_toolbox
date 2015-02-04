@@ -197,34 +197,50 @@ def tag_negation(tokenized_sentences, adj, verbs, adv, bi_adv_adj, bi_adv_verb, 
                         ts[x] = bigram
 
 
+def word_counts(list_of_sentences, raw_word):
+    """Count how many times raw_word occurs in list_of sentences
+
+    list_of_sentences MUST be a list of textblob.Sentece objects
+    """
+
+    raw_word_count = 0
+    for sentence in list_of_sentences:
+        raw_word_count = raw_word_count + sentence.word_counts[raw_word]
+    return raw_word_count
+
+
+def list_of_sentences_size(list_of_sentences):
+    """Calculates the size (in token terms) of the list_of_senteces
+
+    list_of_sentences MUST be a list of textblob.Sentece objects
+    """
+
+    sentences_size = 0
+    for sentence in list_of_sentences:
+        sentences_size = sentences_size + len(sentence.words)
+    return sentences_size
+
+
 def turn_into_bag_of_words(list_of_sentences, adj=True, verbs=True, adv=True, bi_adv_adj=True,
                            bi_adv_verb=True, bi_adv_adv=True, tri_adv_adv_adj=True,
                            far_negation=True):
     """Return a list of bag of Words related to each sentences based on params"""
 
-    # count tokens
-    tokens_qtd = 0
-    filtered_text = ''
-    for sentence in list_of_sentences:
-        tokens_qtd = tokens_qtd + len(sentence.words)
-        filtered_text = filtered_text + sentence.dict['raw']
-
     # create unigrams
-    filtered_text_blob = TextBlob(filtered_text)
     tokenized_sentences = []
     for sentence in list_of_sentences:
         tokenized_sen = []
         position = 0
         for (word, tag) in sentence.tags:  # TODO configure the proper tagger
-            word_counts = filtered_text_blob.word_counts[word]
-            if word_counts > 0:
+            word_qtd = word_counts(list_of_sentences, word)
+            if word_qtd > 0:
                 position = position + 1
                 unigram = Unigram()
                 unigram.word = word
                 unigram.pos_tag = POS_TAGS[tag] if POS_TAGS[tag] else 0
                 unigram.position = position
-                unigram.frequency = word_counts
-                unigram.doc_word_count = tokens_qtd
+                unigram.frequency = word_qtd
+                unigram.doc_word_count = list_of_sentences_size(list_of_sentences)
                 tokenized_sen.append(unigram)
         tokenized_sentences.append(tokenized_sen)
 
