@@ -3,6 +3,7 @@ import intensifiers as ints
 import lexicon
 from pattern.en import wordnet
 from pattern.en import NOUN, VERB, ADJECTIVE, ADVERB
+from textblob import Word
 
 SWN_PRIOR_POLARITY = 0
 SWN = 1
@@ -102,8 +103,9 @@ def word_prior_polarity(word, pos_tag=None):
     if pos_tag is None:
         pos_tag = 'a'
 
+    word_lemma = Word(word).lemmatize(pos_tag)
     prior_polarity_score = swn_prior_polarity.get_entry_by_name_and_pos(
-        word, pos_tag)
+        word_lemma, pos_tag)
     if prior_polarity_score is None:
         return None
 
@@ -124,7 +126,13 @@ def word_swn_polarity(word, pos_tag=None):
             "ADJECTIVE": ADJECTIVE, "ADVERB": ADVERB}
     TAG = TAGS[pos_tag] if pos_tag else ADJECTIVE
 
-    synsets = wordnet.synsets(word, TAG)
+    pos_tag_lemma = "n" if pos_tag in pre.POS_TAGS.NOUNS else pos_tag
+    pos_tag_lemma = "v" if pos_tag in pre.POS_TAGS.VERBS else pos_tag
+    pos_tag_lemma = "r" if pos_tag in pre.POS_TAGS.ADVS else pos_tag
+    pos_tag_lemma = "a" if pos_tag in pre.POS_TAGS.ADJS else 'a'
+
+    word_lemma = Word(word).lemmatize(pos_tag_lemma)
+    synsets = wordnet.synsets(word_lemma, TAG)
     if len(synsets) > 0:
         polarity = synsets[0].weight
         return polarity
@@ -207,14 +215,11 @@ def get_bigram_polarity(bigram, lexicon=SWN_PRIOR_POLARITY,
             unigram_polarity = unigram_polarity + \
                 (unigram_polarity * ints.intensifiers.very_high.modifier)
         elif bigram.word_1.word in [ints.intensifiers.highest.seed] + ints.intensifiers.highest.words:
-            # print 'highest', bigram.word_1.word
             unigram_polarity = unigram_polarity + \
                 (unigram_polarity * ints.intensifiers.highest.modifier)
         elif bigram.word_1.word in [ints.intensifiers.most_highest.seed] + ints.intensifiers.most_highest.words:
             unigram_polarity = unigram_polarity + \
                 (unigram_polarity * ints.intensifiers.most_highest.modifier)
-
-        # print 'after - unigram_polarity:', unigram_polarity
     return unigram_polarity
 
 
