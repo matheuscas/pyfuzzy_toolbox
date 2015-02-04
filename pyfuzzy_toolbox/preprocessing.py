@@ -89,9 +89,10 @@ class Trigram(object):
 # Methods
 
 
-def start(text, adj=True, verbs=True, adv=True, bi_adv_adj=True, bi_adv_verb=True, bi_adv_adv=True, tri_adv_adv_adj=True, far_negation=True):
+def start(text, adj=True, verbs=True, adv=True, bi_adv_adj=True, bi_adv_verb=True, bi_adv_adv=True, tri_adv_adv_adj=True, far_negation=True, filter_irrealis=True):
     splitted_sentences = split_into_sentences(text)
-    splitted_sentences = filter_irrealis_block(splitted_sentences)
+    if filter_irrealis:
+        splitted_sentences = filter_irrealis_block(splitted_sentences)
     return turn_into_bag_of_words(splitted_sentences, adj=adj, verbs=verbs, adv=adv, bi_adv_adj=bi_adv_adj, bi_adv_verb=bi_adv_verb,
                                   bi_adv_adv=bi_adv_adv, tri_adv_adv_adj=tri_adv_adv_adj, far_negation=far_negation)
 
