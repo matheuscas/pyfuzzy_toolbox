@@ -46,7 +46,7 @@ def test_sum_of_positive_verbs_scores():
 
 
 def test_sum_of_negative_adjectives_scores():
-    expected_sum = -0.06002691588785047
+    expected_sum = -0.06547738317757008
     sum_of_negative_adjectives = sum_features.sum_of_unigrams_scores(
         bow_sentences_1a, positive=False)
     nose.tools.assert_almost_equal(expected_sum, sum_of_negative_adjectives)
@@ -144,7 +144,7 @@ def test_sum_of_positive_adjectives_scores_and_bigrams_with_adjectives():
 
 
 def test_sum_of_negative_adjectives_scores_and_bigrams_with_adjectives():
-    expected_sum = -2.235680280373832
+    expected_sum = -2.2411307476635516
     sum_of_negative_adjectives_and_bigrams_with_adjectives = sum_features.sum_of_unigrams_and_bigrams_scores(
         bow_sentences_1a, positive=False)
     nose.tools.assert_almost_equal(
@@ -192,7 +192,7 @@ def test_sum_ratio_of_positive_adjectives_scores_and_bigrams_with_adjectives():
 
 
 def test_sum_ratio_of_negative_adjectives_scores_and_bigrams_with_adjectives():
-    expected_sum = -0.006964736075930941
+    expected_sum = -0.006981715724808572
     sum_of_negative_adjectives_and_bigrams_with_adjectives = sum_features.sum_of_unigrams_and_bigrams_scores(
         bow_sentences_1a, positive=False, ratio=True)
     nose.tools.assert_almost_equal(
@@ -383,7 +383,7 @@ def test_count_selected_ngrams():
 
 def test_max_rule_score_for_adjective():
     assert max_features.max_rule_score_for_unigrams(
-        bow_sentences_1a, unigram=count_features.ADJS)['sign'] == 1
+        bow_sentences_1a, unigram=count_features.ADJS)['sign'] == 0
 
 
 def test_max_rule_score_for_adverbs():
