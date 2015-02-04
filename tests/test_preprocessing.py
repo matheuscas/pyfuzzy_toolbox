@@ -1,5 +1,4 @@
 from pyfuzzy_toolbox import preprocessing as pre
-from textblob import TextBlob
 
 # Cornel Movie Review 2
 text_1 = "`oh behave !" + \
