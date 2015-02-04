@@ -28,8 +28,8 @@ def test_create_arff_dict():
 	list_of_attributes_and_data.append(features.start(bow_sentences_2a, features.NOMINAL_NEGATIVE_POLARITY))
 
 	arff_dict = util.create_arff_dict(list_of_attributes_and_data, 'test')
-	assert len(arff_dict.attributes) == 74
-	assert len(arff_dict.data[0]) == len(arff_dict.data[1]) == len(arff_dict.data[2]) == 74
+	assert len(arff_dict.attributes) == 76
+	assert len(arff_dict.data[0]) == len(arff_dict.data[1]) == len(arff_dict.data[2]) == 76
 
 	# pprint.pprint(arff_dict)
 
