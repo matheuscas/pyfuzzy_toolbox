@@ -12,17 +12,23 @@ def eval_examples(examples):
     FP = 0.0
     FN = 0.0
     NONE = 0.0
+    NUM_POSITIVES = 0.0
+    NUM_NEGATIVES = 0.0
 
     for e in examples:
         if e['predicted_class']:
             if e['known_class'] == 1.0 and e['predicted_class'].name == 'positive':
                 TP = TP + 1.0
+                NUM_POSITIVES += 1
             elif e['known_class'] == -1.0 and e['predicted_class'].name == 'negative':
                 TN = TN + 1.0
+                NUM_NEGATIVES += 1
             elif e['known_class'] == 1.0 and e['predicted_class'].name == 'negative':
                 FN = FN + 1.0
+                NUM_POSITIVES += 1
             elif e['known_class'] == -1.0 and e['predicted_class'].name == 'positive':
                 FP = FP + 1.0
+                NUM_NEGATIVES += 1
         else:
             NONE += 1
 
@@ -30,7 +36,13 @@ def eval_examples(examples):
             'recall': evaluation.recall(TP, FN),
             'f1': evaluation.f1(TP, FP, TN, FN),
             'accuracy': evaluation.accuracy(TP, FP, TN, FN),
-            'non classified': NONE}
+            'non classified': NONE,
+            'TP':TP,
+            'TN':TN,
+            'FP':FP,
+            'FN':FN,
+            'NUM_POSITIVES': NUM_POSITIVES,
+            'NUM_NEGATIVES': NUM_NEGATIVES}
 
 
 def __rule_compatibility(example, rule):
@@ -87,7 +99,8 @@ def cfrm(examples, rules, verbose=False):
 
 def gfrm(examples, rules, verbose=False):
     """
-    Classifies examples using the class that has the highest compatibility degree with the example. The function fills 'predicted_class' field in each example with the predicted FuzzySet class.
+    Classifies examples using the class that has the highest compatibility degree with the example. 
+    The function fills 'predicted_class' field in each example with the predicted FuzzySet class.
 
             **Binary classfication only
             ** It is a messy code. PLEASE REFACTOR!!!!!
@@ -135,6 +148,7 @@ def gfrm(examples, rules, verbose=False):
                 continue
             break
 
+        print 'known_class: ', e['known_class']
         if rule_compatibility[1] == 0:
             e['predicted_class'] = None
             print 'predicted_class', None
