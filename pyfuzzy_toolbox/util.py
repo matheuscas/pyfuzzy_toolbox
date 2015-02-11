@@ -83,6 +83,17 @@ def k_fold_split_arff_dict(arff_dict, k=10):
     return k_folds_arff_dicts
 
 
+def create_train_data_from_k_folds_splits(k_folds_list, k_fold_test_index):
+	train_data = []
+	for idx, fold in enumerate(k_folds_list):
+		if idx != k_fold_test_index:
+			for data in fold['data']:
+				train_data.append(data)
+
+	train_attributes = k_folds_list[0]['attributes']
+	return {'attributes': train_attributes, 'data': train_data}
+
+
 def equalizer_unfiltered_arff_data(unfiltered_arff, filtered_arff):
     filtered_attributes = []
     for fa in filtered_arff['attributes']:
