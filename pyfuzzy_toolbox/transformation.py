@@ -23,7 +23,6 @@ def start(bow_sentences,
           bias_compensation=0.5,
           shift_polarity=True,
           shift=0.75,
-          switch_polarity=False,
           filter_ngrams=True):
 
     for bs in bow_sentences:
@@ -43,8 +42,7 @@ def start(bow_sentences,
                                                      compensate_bias=compensate_bias,
                                                      bias_compensation=bias_compensation,
                                                      shift_polarity=shift_polarity,
-                                                     shift=shift,
-                                                     switch_polarity=switch_polarity)
+                                                     shift=shift)
             elif pre.is_trigram(ngram):
                 ngram.polarity = get_trigram_polarity(ngram,
                                                       lexicon=lexicon,
@@ -53,8 +51,7 @@ def start(bow_sentences,
                                                       compensate_bias=compensate_bias,
                                                       bias_compensation=bias_compensation,
                                                       shift_polarity=shift_polarity,
-                                                      shift=shift,
-                                                      switch_polarity=switch_polarity)
+                                                      shift=shift)
 
     if filter_ngrams:
         filtered_bow_sentences = []
@@ -79,7 +76,7 @@ def is_negation(ngram):
         return False
 
 
-def negation_polarity(ngram_polarity, shift_polarity=True, shift=0.75, switch_polarity=False):
+def negation_polarity(ngram_polarity, shift_polarity=True, shift=0.75):
 
     if shift_polarity:
         if ngram_polarity > 0:
@@ -88,8 +85,7 @@ def negation_polarity(ngram_polarity, shift_polarity=True, shift=0.75, switch_po
             return ngram_polarity + shift
         else:
             return ngram_polarity
-
-    if switch_polarity:
+    else:
         return ngram_polarity * (-1)
 
 
@@ -183,8 +179,7 @@ def get_bigram_polarity(bigram, lexicon=SWN_PRIOR_POLARITY,
                         compensate_bias=True,
                         bias_compensation=0.5,
                         shift_polarity=True,
-                        shift=0.75,
-                        switch_polarity=False):
+                        shift=0.75):
 
     unigram_polarity = get_unigram_polarity(bigram.word_2, lexicon=lexicon,
                                             use_position=use_position,
@@ -195,8 +190,7 @@ def get_bigram_polarity(bigram, lexicon=SWN_PRIOR_POLARITY,
     if is_negation(bigram):
         unigram_polarity = negation_polarity(unigram_polarity,
                                              shift_polarity=True,
-                                             shift=0.75,
-                                             switch_polarity=False)
+                                             shift=0.75)
     else:
         # print '\nbefore - unigram_polarity:', unigram_polarity
         if bigram.word_1.word in [ints.intensifiers.low.seed] + ints.intensifiers.low.words:
@@ -229,8 +223,7 @@ def get_trigram_polarity(trigram, lexicon=SWN_PRIOR_POLARITY,
                          compensate_bias=True,
                          bias_compensation=0.5,
                          shift_polarity=True,
-                         shift=0.75,
-                         switch_polarity=False):
+                         shift=0.75):
 
     bigram = pre.Bigram()
     bigram.word_1 = trigram.word_2
@@ -244,8 +237,7 @@ def get_trigram_polarity(trigram, lexicon=SWN_PRIOR_POLARITY,
     if is_negation(trigram):
         bigram_polarity = negation_polarity(bigram_polarity,
                                             shift_polarity=True,
-                                            shift=0.75,
-                                            switch_polarity=False)
+                                            shift=0.75)
     else:
         if trigram.word_1.word in [ints.intensifiers.low.seed] + ints.intensifiers.low.words:
             bigram_polarity = bigram_polarity + \
