@@ -132,12 +132,14 @@ def gfrm(examples, rules, verbose=False):
         for (key, value) in e_rule.iteritems():
             e_rule[key] = float(sum(value)) / len(value)
 
-        print 'class compatibilities', e_rule
+        if verbose:
+            print 'class compatibilities', e_rule
 
         rule_compatibility = max(
             e_rule.iteritems(), key=operator.itemgetter(1))
         max_class_name = rule_compatibility[0]
-        print 'max_class_name:', max_class_name
+        if verbose:
+            print 'max_class_name:', max_class_name
         max_class = None
         for r in rules:
             for o in r.outputs:
@@ -148,14 +150,18 @@ def gfrm(examples, rules, verbose=False):
                 continue
             break
 
-        print 'known_class: ', e['known_class']
+        if verbose:
+            print 'known_class: ', e['known_class']
         if rule_compatibility[1] == 0:
             e['predicted_class'] = None
-            print 'predicted_class', None
+            if verbose:
+                print 'predicted_class', None
         else:
-            print 'predicted_class', max_class.name
+            if verbose:
+                print 'predicted_class', max_class.name
             e['predicted_class'] = max_class
-        print '--------------------------------'
+        if verbose:
+            print '--------------------------------'
 
 
 def _k_folds(_list, k):
