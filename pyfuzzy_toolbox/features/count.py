@@ -156,7 +156,11 @@ def percentage_of_negated_ngrams_by_document_size(bow_sentences):
                 _doc_words_count = ngram.word_1.doc_word_count
                 _count += 1
 
-    return {'value': _count / float(_doc_words_count), 'name': 'percentage_of_negated_ngrams_by_document_size'}
+    _doc_words_count = float(_doc_words_count)
+    if _doc_words_count > 0:
+        return {'value': _count / float(_doc_words_count), 'name': 'percentage_of_negated_ngrams_by_document_size'}
+    else:
+        return {'value': 0.0, 'name': 'percentage_of_negated_ngrams_by_document_size'}
 
 
 """ ------------------------------ Features functions ------------------------------ """
