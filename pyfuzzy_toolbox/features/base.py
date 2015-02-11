@@ -1,4 +1,4 @@
-from . import ALL, ALL_NON_GENERAL_BIGRAMS
+from . import ALL, ALL_NON_GENERAL_BIGRAMS, ADJS, ADVS, VERBS, ADJS_AND_ADVS, ADJS_AND_VERBS, ADVS_AND_VERBS, ADJS_AND_BI_ADV_ADJ, ADVS_AND_BI_ADV_ADV, VERBS_AND_BI_ADV_VERB
 import count as count_feats
 import sum as sum_feats
 import max as max_feats
