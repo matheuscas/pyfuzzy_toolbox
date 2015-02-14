@@ -1,6 +1,7 @@
 import arff
 import time
 import datetime
+import csv
 from addict import Dict
 
 
@@ -29,6 +30,16 @@ def create_arff_file(arff_dict, name=None, timestamp=False):
     arff_file = open(file_name, 'w')
     arff.dump(raw_dict, arff_file)
     return file_name
+
+
+def create_csv_file(arff_dict, name=None, timestamp=False):
+
+	file_name = name if name else arff_dict.relation
+	with open(file_name, "wb") as out_file:
+		writer = csv.DictWriter(out_file, delimiter=',', fieldnames=arff_dict['attributes'])
+		writer.writeheader()
+		for row in arff_dict['data']:
+			writer.writerow(str(row))
 
 
 # UNTESTED
