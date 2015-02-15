@@ -168,7 +168,7 @@ def get_unigram_polarity(unigram, lexicon=SWN_PRIOR_POLARITY,
         polarity = polarity / float(unigram.frequency)
 
     if polarity < 0 and compensate_bias:
-        polarity = polarity / bias_compensation
+        polarity = polarity + (polarity * bias_compensation)
 
     return polarity
 
