@@ -34,12 +34,13 @@ def create_arff_file(arff_dict, name=None, timestamp=False):
 
 def create_csv_file(arff_dict, name=None, timestamp=False):
 
-	file_name = name if name else arff_dict.relation
-	with open(file_name, "wb") as out_file:
-		writer = csv.DictWriter(out_file, delimiter=',', fieldnames=arff_dict['attributes'])
-		writer.writeheader()
-		for row in arff_dict['data']:
-			writer.writerow(str(row))
+    file_name = name if name else arff_dict.relation
+    with open(file_name, "wb") as out_file:
+        writer = csv.DictWriter(
+            out_file, delimiter=',', fieldnames=arff_dict['attributes'])
+        writer.writeheader()
+        for row in arff_dict['data']:
+            writer.writerow(str(row))
 
 
 # UNTESTED
@@ -60,10 +61,10 @@ def split_arff_dict(arff_dict, train_ratio=0.8):
 
 def k_fold_split_arff_dict(arff_dict, k=10):
     def is_positive(d):
-    	return True if d[len(d) - 1] == 1.0 or d[len(d) - 1] == 'positive' else False
+        return True if d[len(d) - 1] == 1.0 or d[len(d) - 1] == 'positive' else False
 
     def is_negative(d):
-    	return True if d[len(d) - 1] == -1.0 or d[len(d) - 1] == 'negative' else False
+        return True if d[len(d) - 1] == -1.0 or d[len(d) - 1] == 'negative' else False
     positive_data = []
     negative_data = []
 
@@ -73,36 +74,42 @@ def k_fold_split_arff_dict(arff_dict, k=10):
         elif is_negative(data):
             negative_data.append(data)
 
-    size_fold = ((len(positive_data)) / k) if len(positive_data) >= len(negative_data) else ((len(negative_data)) / k)
-    index_limit = len(positive_data) if len(positive_data) >= len(negative_data) else len(negative_data)
+    size_fold = ((len(positive_data)) / k) if len(positive_data) >= len(
+        negative_data) else ((len(negative_data)) / k)
+    index_limit = len(positive_data) if len(positive_data) >= len(
+        negative_data) else len(negative_data)
     k_folds_list = []
     fold = 1
 
     fold_data = []
     for dx in range(index_limit):
-    	fold_data.append(positive_data[dx])
-    	fold_data.append(negative_data[dx])
-    	if dx == (fold * size_fold - 1):
-    		k_folds_list.append(fold_data)
-    		fold_data = []
-    		fold += 1
+        fold_data.append(positive_data[dx])
+        fold_data.append(negative_data[dx])
+        if dx == (fold * size_fold - 1):
+            k_folds_list.append(fold_data)
+            fold_data = []
+            fold += 1
 
     k_folds_arff_dicts = []
     for k_fold_data in k_folds_list:
-    	k_folds_arff_dicts.append({'attributes': arff_dict['attributes'], 'data': k_fold_data})
+        k_folds_arff_dicts.append(
+            {'attributes': arff_dict['attributes'], 'data': k_fold_data})
 
     return k_folds_arff_dicts
 
 
 def create_train_data_from_k_folds_splits(k_folds_list, k_fold_test_index):
-	train_data = []
-	for idx, fold in enumerate(k_folds_list):
-		if idx != k_fold_test_index:
-			for data in fold['data']:
-				train_data.append(data)
+    train_data = []
+    for idx, fold in enumerate(k_folds_list):
+        if idx != k_fold_test_index:
+            for data in fold['data']:
+                train_data.append(data)
 
-	train_attributes = k_folds_list[0]['attributes']
-	return {'attributes': train_attributes, 'data': train_data}
+    train_attributes = k_folds_list[0]['attributes']
+    train_data_dict = Dict()
+    train_data_dict.attributes = train_attributes
+    train_data_dict.data = train_data
+    return train_data_dict
 
 
 def equalizer_unfiltered_arff_data(unfiltered_arff, filtered_arff):
