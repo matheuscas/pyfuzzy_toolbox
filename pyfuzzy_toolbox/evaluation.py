@@ -1,5 +1,4 @@
 def precision(TP, FP):
-	print (TP + FP)
 	return (TP / (TP + FP)) if (TP + FP) > 0 else 0
 
 
