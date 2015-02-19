@@ -57,7 +57,7 @@ def start(bow_sentences,
     if max_features:
         features_list = features_list + max_feats.all(bow_sentences,
                                                       unigrams=unigrams,
-                                                      unigram_type=ALL,
+                                                      unigram_type=unigram_type,
                                                       non_general_unigrams_and_bigrams=non_general_unigrams_and_bigrams,
                                                       non_general_bigram_type=non_general_bigram_type,
                                                       general_unigrams_and_bigrams=general_unigrams_and_bigrams,
