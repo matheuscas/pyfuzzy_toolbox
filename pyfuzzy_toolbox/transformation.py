@@ -17,7 +17,7 @@ swn_prior_polarity = lexicon.SentiWords()
 
 def start(bow_sentences,
           lexicon=SWN_PRIOR_POLARITY,
-          use_position=True,
+          use_position=False,
           use_frequency=True,
           compensate_bias=True,
           bias_compensation=0.5,
@@ -137,7 +137,7 @@ def word_swn_polarity(word, pos_tag=None):
 
 
 def get_unigram_polarity(unigram, lexicon=SWN_PRIOR_POLARITY,
-                         use_position=True,
+                         use_position=False,
                          use_frequency=True,
                          compensate_bias=True,
                          bias_compensation=0.5):
@@ -174,7 +174,7 @@ def get_unigram_polarity(unigram, lexicon=SWN_PRIOR_POLARITY,
 
 
 def get_bigram_polarity(bigram, lexicon=SWN_PRIOR_POLARITY,
-                        use_position=True,
+                        use_position=False,
                         use_frequency=True,
                         compensate_bias=True,
                         bias_compensation=0.5,
@@ -189,8 +189,8 @@ def get_bigram_polarity(bigram, lexicon=SWN_PRIOR_POLARITY,
 
     if is_negation(bigram):
         unigram_polarity = negation_polarity(unigram_polarity,
-                                             shift_polarity=True,
-                                             shift=0.75)
+                                             shift_polarity=shift_polarity,
+                                             shift=shift)
     else:
         # print '\nbefore - unigram_polarity:', unigram_polarity
         if bigram.word_1.word in [ints.intensifiers.low.seed] + ints.intensifiers.low.words:
@@ -218,7 +218,7 @@ def get_bigram_polarity(bigram, lexicon=SWN_PRIOR_POLARITY,
 
 
 def get_trigram_polarity(trigram, lexicon=SWN_PRIOR_POLARITY,
-                         use_position=True,
+                         use_position=False,
                          use_frequency=True,
                          compensate_bias=True,
                          bias_compensation=0.5,
@@ -236,8 +236,8 @@ def get_trigram_polarity(trigram, lexicon=SWN_PRIOR_POLARITY,
 
     if is_negation(trigram):
         bigram_polarity = negation_polarity(bigram_polarity,
-                                            shift_polarity=True,
-                                            shift=0.75)
+                                            shift_polarity=shift_polarity,
+                                            shift=shift)
     else:
         if trigram.word_1.word in [ints.intensifiers.low.seed] + ints.intensifiers.low.words:
             bigram_polarity = bigram_polarity + \
