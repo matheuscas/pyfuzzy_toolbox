@@ -104,14 +104,14 @@ def wang_mendel(inputs, inputs_names, inputs_regions, output_name, outputs_regio
         rule = fis.Rule([], [])
         for i, xi in enumerate(xs):
             xi_degrees = []
-            for set in inputs_regions[i]:
-                xi_degrees.append(set.degree(xi))
+            for fuzzySet in inputs_regions[i]:
+                xi_degrees.append(fuzzySet.degree(xi))
             max_idx = __max_value_index(xi_degrees)
             rule.antecedents.append(
                 fis.Antecedent(inputs_names[i], xi, inputs_regions[i][max_idx]))
         y_degrees = []
-        for set in outputs_regions:
-            y_degrees.append(set.degree(y))
+        for fuzzySet in outputs_regions:
+            y_degrees.append(fuzzySet.degree(y))
         max_idx = __max_value_index(y_degrees)
         rule.outputs.append(
             fis.Output(output_name, y, outputs_regions[max_idx]))
