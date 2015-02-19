@@ -17,16 +17,16 @@ def eval_examples(examples):
 
     for e in examples:
         if e['predicted_class']:
-            if e['known_class'] == 1.0 and e['predicted_class'].name == 'positive':
+            if (e['known_class'] == 1.0 or e['known_class'] == 'positive') and e['predicted_class'].name == 'positive':
                 TP = TP + 1.0
                 NUM_POSITIVES += 1
-            elif e['known_class'] == -1.0 and e['predicted_class'].name == 'negative':
+            elif (e['known_class'] == -1.0 or e['known_class'] == 'negative') and e['predicted_class'].name == 'negative':
                 TN = TN + 1.0
                 NUM_NEGATIVES += 1
-            elif e['known_class'] == 1.0 and e['predicted_class'].name == 'negative':
+            elif (e['known_class'] == 1.0 or e['known_class'] == 'positive') and e['predicted_class'].name == 'negative':
                 FN = FN + 1.0
                 NUM_POSITIVES += 1
-            elif e['known_class'] == -1.0 and e['predicted_class'].name == 'positive':
+            elif (e['known_class'] == -1.0 or e['known_class'] == 'negative') and e['predicted_class'].name == 'positive':
                 FP = FP + 1.0
                 NUM_NEGATIVES += 1
         else:
@@ -37,10 +37,10 @@ def eval_examples(examples):
             'f1': evaluation.f1(TP, FP, TN, FN),
             'accuracy': evaluation.accuracy(TP, FP, TN, FN),
             'non classified': NONE,
-            'TP':TP,
-            'TN':TN,
-            'FP':FP,
-            'FN':FN,
+            'TP': TP,
+            'TN': TN,
+            'FP': FP,
+            'FN': FN,
             'NUM_POSITIVES': NUM_POSITIVES,
             'NUM_NEGATIVES': NUM_NEGATIVES}
 
@@ -54,16 +54,25 @@ def __rule_compatibility(example, rule):
     """
 
     compatibility = 1
-    for ei, e in enumerate(example):
-        example_part = e
-        if ei == 0 and example_part < rule.antecedents[ei].fuzzy_set.params[0]:
-            example_part = float(rule.antecedents[ei].fuzzy_set.params[0])
+    for ei, input_example in enumerate(example):
+        # checks if the antecedent fuzzy set is the highest set
+        temp_input_example = input_example
+        antecedent_fuzzy_set = rule.antecedents[ei].fuzzy_set
+        if (antecedent_fuzzy_set.params[len(antecedent_fuzzy_set.params) - 1] == antecedent_fuzzy_set.range[len(antecedent_fuzzy_set.range) - 1]) and \
+                (antecedent_fuzzy_set.params[len(antecedent_fuzzy_set.params) - 1] == antecedent_fuzzy_set.params[len(antecedent_fuzzy_set.params) - 2]):
+            if temp_input_example > antecedent_fuzzy_set.params[len(antecedent_fuzzy_set.params) - 1]:
+                # print 'BIGGER THAN BIGEST:', temp_input_example, '(', antecedent_fuzzy_set.params[0], antecedent_fuzzy_set.params[1], antecedent_fuzzy_set.params[2], ')'
+                temp_input_example = float(antecedent_fuzzy_set.params[len(antecedent_fuzzy_set.params) - 1])
 
-        if ei == (len(rule.antecedents) - 1) and example_part > rule.antecedents[ei].fuzzy_set.params[2]:
-            example_part = float(rule.antecedents[ei].fuzzy_set.params[2])
+        # checks if the antecedent fuzzy set is the lowest set
+        if (antecedent_fuzzy_set.params[0] == antecedent_fuzzy_set.range[0]) and \
+                (antecedent_fuzzy_set.params[0] == antecedent_fuzzy_set.params[1]):
+            if temp_input_example < antecedent_fuzzy_set.params[0]:
+                # print 'LOWER THAN LOWEST:', temp_input_example, antecedent_fuzzy_set.params[0]
+                temp_input_example = float(antecedent_fuzzy_set.params[0])
 
         compatibility = ops.t_norm(
-            compatibility, rule.antecedents[ei].fuzzy_set.degree(example_part))
+            compatibility, rule.antecedents[ei].fuzzy_set.degree(temp_input_example))
     return compatibility
 
 
@@ -99,7 +108,7 @@ def cfrm(examples, rules, verbose=False):
 
 def gfrm(examples, rules, verbose=False):
     """
-    Classifies examples using the class that has the highest compatibility degree with the example. 
+    Classifies examples using the class that has the highest compatibility degree with the example.
     The function fills 'predicted_class' field in each example with the predicted FuzzySet class.
 
             **Binary classfication only
@@ -112,31 +121,31 @@ def gfrm(examples, rules, verbose=False):
     rules -- list of Rule objects to classify examples
     """
 
-    for ei, e in enumerate(examples):
+    for ei, example in enumerate(examples):
         if verbose:
             print str(ei), '/', str(len(examples))
-        e_rule = {}
-        for r in rules:
-            rule_compat = __rule_compatibility(e['inputs'], r)
-            for o in r.outputs:
-                if o.fuzzy_set.name not in e_rule:
-                    e_rule[o.fuzzy_set.name] = []
+        example_rule = {}
+        for rule in rules:
+            rule_compat = __rule_compatibility(example['inputs'], rule)
+            for output in rule.outputs:
+                if output.fuzzy_set.name not in example_rule:
+                    example_rule[output.fuzzy_set.name] = []
 
-                degrees = e_rule[o.fuzzy_set.name]
+                degrees = example_rule[output.fuzzy_set.name]
                 degrees.append(rule_compat)
-                e_rule[o.fuzzy_set.name] = degrees
+                example_rule[output.fuzzy_set.name] = degrees
 
-        # print 'class compatibilities', e_rule
+        # print 'class compatibilities', example_rule
         # print '--------------------------------'
 
-        for (key, value) in e_rule.iteritems():
-            e_rule[key] = float(sum(value)) / len(value)
+        for (key, value) in example_rule.iteritems():
+            example_rule[key] = float(sum(value)) / len(value)
 
         if verbose:
-            print 'class compatibilities', e_rule
+            print 'class compatibilities', example_rule
 
         rule_compatibility = max(
-            e_rule.iteritems(), key=operator.itemgetter(1))
+            example_rule.iteritems(), key=operator.itemgetter(1))
         max_class_name = rule_compatibility[0]
         if verbose:
             print 'max_class_name:', max_class_name
@@ -151,15 +160,15 @@ def gfrm(examples, rules, verbose=False):
             break
 
         if verbose:
-            print 'known_class: ', e['known_class']
+            print 'known_class: ', example['known_class']
         if rule_compatibility[1] == 0:
-            e['predicted_class'] = None
+            example['predicted_class'] = None
             if verbose:
                 print 'predicted_class', None
         else:
             if verbose:
                 print 'predicted_class', max_class.name
-            e['predicted_class'] = max_class
+            example['predicted_class'] = max_class
         if verbose:
             print '--------------------------------'
 
