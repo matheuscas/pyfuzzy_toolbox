@@ -89,7 +89,10 @@ class Trigram(object):
 # Methods
 
 
-def start(text, adj=True, verbs=True, adv=True, bi_adv_adj=True, bi_adv_verb=True, bi_adv_adv=True, tri_adv_adv_adj=True, far_negation=True, filter_irrealis=True):
+def start(text, adj=True, verbs=True, adv=True,
+          bi_adv_adj=True, bi_adv_verb=True, bi_adv_adv=True,
+          tri_adv_adv_adj=True, far_negation=True, filter_irrealis=True):
+
     splitted_sentences = split_into_sentences(text)
     if filter_irrealis:
         splitted_sentences = filter_irrealis_block(splitted_sentences)
@@ -221,9 +224,9 @@ def list_of_sentences_size(list_of_sentences):
     return sentences_size
 
 
-def turn_into_bag_of_words(list_of_sentences, adj=True, verbs=True, adv=True, bi_adv_adj=True,
-                           bi_adv_verb=True, bi_adv_adv=True, tri_adv_adv_adj=True,
-                           far_negation=True):
+def turn_into_bag_of_words(list_of_sentences, adj=True, verbs=True,
+                           adv=True, bi_adv_adj=True, bi_adv_verb=True,
+                           bi_adv_adv=True, tri_adv_adv_adj=True, far_negation=True):
     """Return a list of bag of Words related to each sentences based on params"""
 
     # create unigrams
