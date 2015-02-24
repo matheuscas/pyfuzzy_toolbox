@@ -3,6 +3,7 @@ import operator
 import random
 import wm
 import evaluation
+import fis
 
 
 def eval_examples(examples):
@@ -96,9 +97,9 @@ def cfrm(examples, rules, verbose=False):
         rule_compatibility = max(
             e_rule.iteritems(), key=operator.itemgetter(1))
 
-        print e_rule.values()
-        print 'rule_compatibility:', rule_compatibility[0].outputs[0].fuzzy_set.name, rule_compatibility[1]
-        print '--------------------------------'
+        # print e_rule.values()
+        # print 'rule_compatibility:', rule_compatibility[0].outputs[0].fuzzy_set.name, rule_compatibility[1]
+        # print '--------------------------------'
         max_rule = rule_compatibility[0]
         if rule_compatibility[1] == 0:
             e['predicted_class'] = None
@@ -232,3 +233,14 @@ def cfrm_cross_validation(inputs, inputs_names, inputs_regions, output_name, out
         accuracies.append(fi_accuracy)
 
     return sum(accuracies) * 1.0 / len(accuracies)
+
+
+def average(examples):
+    for example in examples:
+        avg = reduce(lambda x, y: x + y, example['inputs']) / len(example['inputs'])
+        if avg > 0:
+            example['predicted_class'] = fis.FuzzySet('positive', [], [])
+        elif avg < 0:
+            example['predicted_class'] = fis.FuzzySet('negative', [], [])
+        else:
+            example['predicted_class'] = None
