@@ -14,7 +14,7 @@ def __max_value_index(list):
     return max_idx
 
 
-def generate_regions(_range, N):
+def generate_regions(_range, N, adjust=False, adjust_from_start=False):
     """
     Generates 2N + 1 regions in the passed range
 
@@ -46,6 +46,9 @@ def generate_regions(_range, N):
             'R0', [min_value_range, min_value_range, medium_region.params[1]], _range)
         higher_region = fis.FuzzySet(
             'R2', [medium_region.params[1], max_value_range, max_value_range], _range)
+        print 'RANGE from ',min_value_range,' until ',max_value_range
+        print 'lower region: ', min_value_range, min_value_range, medium_region.params[1]
+        print 'higher region: ', medium_region.params[1],max_value_range, max_value_range
         regions.append(lower_region)
         regions.append(medium_region)
         regions.append(higher_region)
@@ -55,7 +58,15 @@ def generate_regions(_range, N):
         num_regions = num_regions - 2
         regions_size = round(
             (max_value_range - min_value_range) / num_regions, 4)
-        if abs(round(max_value_range - min_value_range, 4)) != abs(round(regions_size * num_regions, 4)):
+        wrong_regions_division = abs(round(max_value_range - min_value_range, 4)) != abs(round(regions_size * num_regions, 4))
+        while adjust and wrong_regions_division:
+            if adjust_from_start:
+                min_value_range = min_value_range + 0.001
+            else:
+                max_value_range = max_value_range - 0.001
+            regions_size = round((max_value_range - min_value_range) / num_regions, 4)
+            wrong_regions_division = abs(round(max_value_range - min_value_range, 4)) != abs(round(regions_size * num_regions, 4))
+        if wrong_regions_division:
             raise ValueError(
                 'Array split does not result in an equal division')
 
@@ -127,6 +138,8 @@ def wang_mendel(inputs, inputs_names, inputs_regions, output_name, outputs_regio
         if rule_key in combined_fuzzy_rule_base.keys():
             if abs(rule_degree) > abs(combined_fuzzy_rule_base[rule_key].degree()):
                 combined_fuzzy_rule_base[rule_key] = rule
+            elif abs(rule_degree) == abs(combined_fuzzy_rule_base[rule_key].degree()):
+                combined_fuzzy_rule_base.pop(rule_key, None)
         else:
             combined_fuzzy_rule_base[rule_key] = rule
 
