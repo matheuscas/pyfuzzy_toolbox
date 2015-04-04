@@ -228,8 +228,9 @@ class Amazon(BaseModel):
 
     """docstring for Amazon datasets for MP3, USB, GPS, Wifi and camera products"""
 
-    def __init__(self, database_name='Amazon_Train_MP3_USB_GPS_WIFI_CAMERA'):
+    def __init__(self, database_name='Amazon_Train_MP3_USB_GPS_WIFI_CAMERA', num_docs=2000):
         BaseModel.__init__(self, database_name)
+        self.num_docs = num_docs
 
     def read_corpora_source(self):
         file = os.path.abspath(
@@ -253,5 +254,22 @@ class Amazon(BaseModel):
 
     def create_database(self):
         docs = self.read_corpora_source()
+        num_pos_docs = self.num_docs / 2
+        num_neg_docs = num_pos_docs
         for d in docs:
-            self.documents.insert(d)
+            if d['polarity'] == 0 and num_neg_docs > 0:
+                self.documents.insert(d)
+                if num_neg_docs > 0:
+                    num_neg_docs -= 1
+                else:
+                    num_neg_docs = 0
+
+            if d['polarity'] == 1 and num_pos_docs > 0:
+                self.documents.insert(d)
+                if num_pos_docs > 0:
+                    num_pos_docs -= 1
+                else:
+                    num_pos_docs = 0
+
+            if num_neg_docs == 0 and num_pos_docs == 0:
+                break
