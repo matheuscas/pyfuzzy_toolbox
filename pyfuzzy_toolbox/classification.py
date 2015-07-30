@@ -110,7 +110,7 @@ def cfrm(examples, rules, verbose=False, weights=None):
             e['predicted_class'] = max_rule.outputs[0].fuzzy_set
 
 
-def gfrm(examples, rules, verbose=False):
+def gfrm(examples, rules, verbose=False, weights=None):
     """
     Classifies examples using the class that has the highest compatibility degree with the example.
     The function fills 'predicted_class' field in each example with the predicted FuzzySet class.
@@ -131,6 +131,12 @@ def gfrm(examples, rules, verbose=False):
         example_rule = {}
         for rule in rules:
             rule_compat = __rule_compatibility(example['inputs'], rule)
+            if weights:
+                for rule_weight in weights:
+                    if rule in rule_weight:
+                        rule_compat = rule_compat * rule_weight[rule]
+                        break
+
             for output in rule.outputs:
                 if output.fuzzy_set.name not in example_rule:
                     example_rule[output.fuzzy_set.name] = []
