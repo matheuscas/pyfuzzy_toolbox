@@ -4,6 +4,7 @@ import random
 import wm
 import evaluation
 import fis
+import pprint
 
 
 def eval_examples(examples):
@@ -62,14 +63,13 @@ def __rule_compatibility(example, rule):
         if (antecedent_fuzzy_set.params[len(antecedent_fuzzy_set.params) - 1] == antecedent_fuzzy_set.range[len(antecedent_fuzzy_set.range) - 1]) and \
                 (antecedent_fuzzy_set.params[len(antecedent_fuzzy_set.params) - 1] == antecedent_fuzzy_set.params[len(antecedent_fuzzy_set.params) - 2]):
             if temp_input_example > antecedent_fuzzy_set.params[len(antecedent_fuzzy_set.params) - 1]:
-                # print 'BIGGER THAN BIGEST:', temp_input_example, '(', antecedent_fuzzy_set.params[0], antecedent_fuzzy_set.params[1], antecedent_fuzzy_set.params[2], ')'
-                temp_input_example = float(antecedent_fuzzy_set.params[len(antecedent_fuzzy_set.params) - 1])
+                temp_input_example = float(
+                    antecedent_fuzzy_set.params[len(antecedent_fuzzy_set.params) - 1])
 
         # checks if the antecedent fuzzy set is the lowest set
         if (antecedent_fuzzy_set.params[0] == antecedent_fuzzy_set.range[0]) and \
                 (antecedent_fuzzy_set.params[0] == antecedent_fuzzy_set.params[1]):
             if temp_input_example < antecedent_fuzzy_set.params[0]:
-                # print 'LOWER THAN LOWEST:', temp_input_example, antecedent_fuzzy_set.params[0]
                 temp_input_example = float(antecedent_fuzzy_set.params[0])
 
         compatibility = ops.t_norm(
@@ -77,7 +77,7 @@ def __rule_compatibility(example, rule):
     return compatibility
 
 
-def cfrm(examples, rules, verbose=False):
+def cfrm(examples, rules, verbose=False, weights=None):
     """
     Classifies examples using the rule that has the highest compatibility degree with the example. The function fills 'predicted_class' field in each example with the predicted FuzzySet class.
 
@@ -93,13 +93,16 @@ def cfrm(examples, rules, verbose=False):
             print str(ei), '/', str(len(examples))
         e_rule = {}
         for r in rules:
-            e_rule[r] = __rule_compatibility(e['inputs'], r)
+            if not weights:
+                e_rule[r] = __rule_compatibility(e['inputs'], r)
+            else:
+                e_rule[r] = __rule_compatibility(e['inputs'], r)
+                for rule_weight in weights:
+                    if r in rule_weight:
+                        e_rule[r] = e_rule[r] * rule_weight[r]
+                        break
         rule_compatibility = max(
             e_rule.iteritems(), key=operator.itemgetter(1))
-
-        # print e_rule.values()
-        # print 'rule_compatibility:', rule_compatibility[0].outputs[0].fuzzy_set.name, rule_compatibility[1]
-        # print '--------------------------------'
         max_rule = rule_compatibility[0]
         if rule_compatibility[1] == 0:
             e['predicted_class'] = None
@@ -237,10 +240,38 @@ def cfrm_cross_validation(inputs, inputs_names, inputs_regions, output_name, out
 
 def average(examples):
     for example in examples:
-        avg = reduce(lambda x, y: x + y, example['inputs']) / len(example['inputs'])
+        avg = reduce(
+            lambda x, y: x + y, example['inputs']) / len(example['inputs'])
         if avg > 0:
             example['predicted_class'] = fis.FuzzySet('positive', [], [])
         elif avg < 0:
             example['predicted_class'] = fis.FuzzySet('negative', [], [])
         else:
             example['predicted_class'] = None
+
+
+def rules_weights(combined_fuzzy_rule_base_list, list_of_modified_fold_test_data):
+
+    combined_fuzzy_rule_base_weights = []
+    for fold_rules_idx, fold_rules in enumerate(combined_fuzzy_rule_base_list):
+        fold_rules_weights = []
+        for rule_key in fold_rules:
+            rule = fold_rules[rule_key]
+            pos_beta = 0
+            neg_beta = 0
+            examples_data = _create_examples(
+                list_of_modified_fold_test_data[fold_rules_idx], False)
+            for example in examples_data:
+                if example['known_class'] == 1.0:
+                    pos_beta += __rule_compatibility(example['inputs'], rule)
+                elif example['known_class'] == -1.0:
+                    neg_beta += __rule_compatibility(example['inputs'], rule)
+
+            if pos_beta == neg_beta:
+                cf = 0
+            else:
+                cf = abs(pos_beta - neg_beta) / (pos_beta + neg_beta)
+
+            fold_rules_weights.append({rule: cf})
+        combined_fuzzy_rule_base_weights.append(fold_rules_weights)
+    return combined_fuzzy_rule_base_weights
