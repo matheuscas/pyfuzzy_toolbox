@@ -138,11 +138,21 @@ def document_size(bow_sentences):
     for bs in bow_sentences:
         for ngram in bs:
             if pre.is_unigram(ngram):
-                return ngram.doc_word_count
-            if pre.is_bigram(ngram):
-                return ngram.word_2.doc_word_count
-            if pre.is_trigram(ngram):
-                return ngram.word_3.doc_word_count
+                if ngram.doc_word_count:
+                    return ngram.doc_word_count
+                else:
+                    return 0
+            elif pre.is_bigram(ngram):
+                if ngram.word_2.doc_word_count:
+                    return ngram.word_2.doc_word_count
+                else:
+                    return 0
+            elif pre.is_trigram(ngram):
+                if ngram.word_3.doc_word_count:
+                    return ngram.word_3.doc_word_count
+                else:
+                    return 0
+    return 0
 
 
 def percentage_of_negated_ngrams_by_document_size(bow_sentences):
