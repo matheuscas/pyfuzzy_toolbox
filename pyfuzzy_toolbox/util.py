@@ -2,6 +2,7 @@ import arff
 import time
 import datetime
 import csv
+import numpy as np
 from addict import Dict
 
 
@@ -137,3 +138,21 @@ def equalizer_unfiltered_arff_data(unfiltered_arff, filtered_arff):
     new_filtered_arff_dict['data'] = new_filtered_data
 
     return new_filtered_arff_dict
+
+
+def get_nparray_from_arff_data(arff_data, polarity='positive'):
+
+    polarity_docs = []
+    for doc in arff_data['data']:
+        if doc[len(doc) - 1] == polarity:
+            polarity_docs.append(doc)
+
+    lines = len(polarity_docs)
+    # minus polarity
+    columns = len(polarity_docs[0]) - 1
+    size = (lines, columns)
+    m = np.matrix(np.zeros(size))
+
+    for idx,doc in enumerate(polarity_docs):
+        m[idx] = doc[:len(doc)-1]
+    return m
