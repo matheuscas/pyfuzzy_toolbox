@@ -44,7 +44,9 @@ def eval_examples(examples):
             'FP': FP,
             'FN': FN,
             'NUM_POSITIVES': NUM_POSITIVES,
-            'NUM_NEGATIVES': NUM_NEGATIVES}
+            'NUM_NEGATIVES': NUM_NEGATIVES,
+            'TPR': evaluation.tpr(TP, FN),
+            'TNR': evaluation.tnr(TN, FP)}
 
 
 def __rule_compatibility(example, rule):

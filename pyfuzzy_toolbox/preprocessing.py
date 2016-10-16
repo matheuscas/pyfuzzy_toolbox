@@ -48,6 +48,11 @@ class Word(object):
     def __str__(self):
         return "(%s , %d, %d, %d, %d)" % (self.word, self.pos_tag, self.position, self.frequency, self.doc_word_count)
 
+    def __eq__(self, other):
+        if isinstance(other, Word):
+            return (self.word == other.word and self.pos_tag == other.pos_tag)
+        return False    
+
 
 class Unigram(Word):
 
@@ -70,6 +75,11 @@ class Bigram(object):
             (self.word_1.word, self.word_1.pos_tag, self.word_1.position, self.word_1.frequency, self.word_1.doc_word_count,
              self.word_2.word, self.word_2.pos_tag, self.word_2.position, self.word_2.frequency, self.word_2.doc_word_count)
 
+    def __eq__(self, other):
+        if isinstance(other, Bigram):
+            return (self.word_1 == other.word_1 and self.word_2 == other.word_2)
+        return False            
+
 
 class Trigram(object):
 
@@ -85,6 +95,11 @@ class Trigram(object):
             (self.word_1.word, self.word_1.pos_tag, self.word_1.position, self.word_1.frequency, self.word_1.doc_word_count,
              self.word_2.word, self.word_2.pos_tag, self.word_2.position, self.word_2.frequency, self.word_2.doc_word_count,
              self.word_3.word, self.word_3.pos_tag, self.word_3.position, self.word_3.frequency, self.word_3.doc_word_count)
+
+    def __eq__(self, other):
+        if isinstance(other, Trigram):
+            return (self.word_1 == other.word_1 and self.word_2 == other.word_2 and self.word_3 == other.word_3)
+        return False
 
 # Methods
 
@@ -292,3 +307,13 @@ def turn_into_bag_of_words(list_of_sentences, adj=True, verbs=True,
     # print_formatted_sentences(tokenized_sentences)
 
     return tokenized_sentences
+
+def dimensionality(documents):
+    dimensions = []
+    for document in documents:
+        for sentence in document['preprocessing']:
+            for ngram in sentence:
+                if ngram not in dimensions:
+                    dimensions.append(ngram)
+        
+    return len(dimensions)

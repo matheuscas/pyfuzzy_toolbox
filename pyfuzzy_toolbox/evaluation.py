@@ -12,3 +12,9 @@ def f1(TP, FP, TN, FN):
 
 def accuracy(TP, FP, TN, FN):
 	return ((TP + TN) / (TP + TN + FP + FN)) if (TP + TN + FP + FN) > 0 else 0
+
+def tpr(TP, FN):
+	return (TP / (TP + FN)) if (TP + FN) > 0 else 0
+
+def tnr(TN, FP):
+	return (TN / (TN + FP)) if (TN + FP) > 0 else 0	

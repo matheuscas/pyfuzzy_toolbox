@@ -158,9 +158,9 @@ class CornellMoviesModel(BaseModel):
     def read_corpora_source(self):
 
         POS_DOCS_PATH = os.path.abspath(
-            os.curdir) + '/resources/corpora/cs_cornell_edu/txt_sentoken/pos'
+            os.curdir) + '/pyfuzzy_toolbox/resources/corpora/cs_cornell_edu/txt_sentoken/pos'
         NEG_DOCS_PATH = os.path.abspath(
-            os.curdir) + '/resources/corpora/cs_cornell_edu/txt_sentoken/neg'
+            os.curdir) + '/pyfuzzy_toolbox/resources/corpora/cs_cornell_edu/txt_sentoken/neg'
         files_pos = os.listdir(POS_DOCS_PATH)
         files_neg = os.listdir(NEG_DOCS_PATH)
         list_of_dict_units = []
@@ -234,7 +234,7 @@ class Amazon(BaseModel):
 
     def read_corpora_source(self):
         file = os.path.abspath(
-            os.curdir) + '/resources/corpora/amazon_corpus/train+validation-reviews_MP3-USB-GPS-802.11-Camera-Phone.txt'
+            os.curdir) + '/pyfuzzy_toolbox/resources/corpora/amazon_corpus/train+validation-reviews_MP3-USB-GPS-802.11-Camera-Phone.txt'
         file = open(file, 'r')
         list_of_dict_units = []
 
